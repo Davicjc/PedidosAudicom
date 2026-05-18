@@ -1,774 +1,1077 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="dark">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Audicom — Solicitar Internet</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<title>Audicom — Portal de Pedidos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 <style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{
-    font-family:'Segoe UI',system-ui,sans-serif;
-    background:linear-gradient(135deg,#0d0221 0%,#1a0533 40%,#0f0c29 100%);
-    min-height:100vh;color:#f1f5f9;
+:root {
+  --bg: #040c1e;
+  --bg2: #071228;
+  --card: rgba(7, 18, 45, 0.78);
+  --card2: rgba(4, 12, 30, 0.9);
+  --border: rgba(59,130,246,0.13);
+  --border-h: rgba(59,130,246,0.35);
+  --blue: #3b82f6;
+  --blue-d: #2563eb;
+  --blue-dd: #1d4ed8;
+  --blue-l: #60a5fa;
+  --cyan: #22d3ee;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --text3: #475569;
+  --green: #10b981;
+  --red: #ef4444;
+  --amber: #f59e0b;
+  --sidebar: 220px;
 }
-.view{display:none;opacity:0;transform:translateY(12px);transition:opacity .3s ease,transform .3s ease}
-.view-active{display:flex!important;flex-direction:column;opacity:1;transform:translateY(0)}
-.glass{background:rgba(30,20,60,0.55);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(139,92,246,0.15);box-shadow:0 8px 32px rgba(0,0,0,0.3)}
-.glass-light{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07)}
-.inp{width:100%;background:rgba(15,12,40,0.7);border:1.5px solid rgba(100,80,180,0.25);border-radius:12px;padding:10px 14px;font-size:14px;color:#f1f5f9;outline:none;transition:border-color .2s}
-.inp:focus{border-color:#7c3aed}
-.inp::placeholder{color:#475569}
-.btn-primary{background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;font-weight:700;border-radius:14px;padding:13px 20px;width:100%;border:none;cursor:pointer;font-size:15px;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
-.btn-primary:hover{background:linear-gradient(135deg,#8b5cf6,#7c3aed);transform:translateY(-1px)}
-.btn-primary:active{transform:translateY(0)}
-.btn-secondary{background:rgba(124,58,237,0.12);color:#a78bfa;font-weight:700;border-radius:14px;padding:12px 20px;width:100%;border:1.5px solid rgba(124,58,237,0.3);cursor:pointer;font-size:15px;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
-.btn-secondary:hover{background:rgba(124,58,237,0.22);border-color:rgba(124,58,237,0.5)}
-.sec-header{display:flex;align-items:center;justify-content:space-between;padding:14px 0;cursor:pointer;user-select:none;border-bottom:1px solid rgba(255,255,255,0.06)}
-.sec-header:hover .sec-title{color:#a78bfa}
-.sec-icon{transition:transform .3s;color:#6d28d9;font-size:13px}
-.label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;margin-bottom:5px}
-.sig-pad{background:#f8fafc;border-radius:10px;border:2px solid rgba(124,58,237,0.2);cursor:crosshair;touch-action:none;display:block;width:100%;height:130px}
-.badge-status{display:inline-flex;align-items:center;gap:6px;font-weight:700;border-radius:999px;padding:5px 14px;font-size:12px;border-width:1px;border-style:solid}
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:rgba(124,58,237,0.3);border-radius:3px}
-@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
-.pulse{animation:pulse-dot 1.5s infinite}
-#toast{opacity:0;transform:translate(-50%,8px);pointer-events:none}
 
-/* ── Modal Detalhe Pedido ──────────────────────────── */
-.pm-card{display:flex;flex-direction:column;width:92vw;max-width:1060px;height:86vh;border-radius:20px;overflow:hidden;background:rgba(11,7,26,0.99);border:1px solid rgba(139,92,246,0.2);box-shadow:0 30px 80px rgba(0,0,0,0.7)}
-.pm-header{display:flex;align-items:center;gap:14px;padding:14px 20px;flex-shrink:0;background:rgba(8,4,20,0.95);border-bottom:1px solid rgba(255,255,255,0.07)}
-.pm-header-icon{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px}
-.pm-header-info{flex:1;min-width:0}
-.pm-header-nome{font-size:18px;font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2}
-.pm-header-sub{display:flex;align-items:center;gap:10px;margin-top:4px}
-.pm-badge{font-size:11px;font-weight:700;padding:2px 10px;border-radius:999px;border-width:1px;border-style:solid}
-.pm-header-cpf{font-size:12px;color:#475569;font-family:monospace}
-.pm-close-btn{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.06);border:none;color:#94a3b8;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
-.pm-close-btn:hover{background:rgba(255,255,255,0.12);color:#fff}
-/* corpo: 2 colunas no desktop */
-.pm-body{flex:1;min-height:0;display:flex;overflow:hidden}
-.pm-left{width:44%;flex-shrink:0;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px;border-right:1px solid rgba(255,255,255,0.06)}
-.pm-right{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden}
-/* boxes de dados */
-.pm-box{background:rgba(6,3,16,0.8);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:14px 16px}
-.pm-box-title{font-size:11px;font-weight:900;color:#a78bfa;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.pm-row{display:flex;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
-.pm-row:last-child{border:none}
-.pm-lbl{font-size:13px;color:#64748b;width:76px;flex-shrink:0;line-height:1.5}
-.pm-val{font-size:13px;color:#e2e8f0;font-weight:600;line-height:1.5;word-break:break-word;flex:1;min-width:0}
-.pm-svc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
-/* ações */
-.pm-status-chip{display:flex;align-items:center;gap:12px;background:rgba(6,3,16,0.8);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:12px 16px}
-.pm-action-row{display:flex;gap:8px}
-.pm-sel{flex:1;background:rgba(10,7,28,0.9);border:1px solid rgba(100,80,180,0.3);border-radius:10px;padding:9px 12px;font-size:13px;color:#f1f5f9;outline:none;font-family:inherit}
-.pm-textarea{width:100%;background:rgba(10,7,28,0.8);border:1.5px solid rgba(100,80,180,0.2);border-radius:10px;padding:10px 12px;font-size:13px;color:#f1f5f9;outline:none;resize:none;transition:border-color .2s;font-family:inherit}
-.pm-textarea:focus{border-color:#7c3aed}
-.pm-btn{width:100%;padding:11px 14px;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;font-family:inherit}
-.pm-btn-accept{background:rgba(16,185,129,0.14);border:1px solid rgba(16,185,129,0.35);color:#34d399}
-.pm-btn-accept:hover{background:rgba(16,185,129,0.24)}
-.pm-btn-reject{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);color:#f87171}
-.pm-btn-reject:hover{background:rgba(239,68,68,0.2)}
-.pm-btn-send{background:rgba(124,58,237,0.14);border:1px solid rgba(124,58,237,0.35);color:#a78bfa}
-.pm-btn-send:hover{background:rgba(124,58,237,0.24)}
-.pm-btn-alter{padding:10px 16px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:#7c3aed;border:none;color:#fff;flex-shrink:0;font-family:inherit;transition:background .15s}
-.pm-btn-alter:hover{background:#6d28d9}
-.pm-btn-del{width:100%;padding:10px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;background:transparent;border:1px dashed rgba(239,68,68,0.25);display:flex;align-items:center;justify-content:center;gap:8px;color:rgba(239,68,68,0.55);transition:all .15s;font-family:inherit}
-.pm-btn-del:hover{color:#f87171;border-color:rgba(239,68,68,0.5)}
-/* assinaturas */
-.pm-sig-row{display:flex;gap:12px;flex-wrap:wrap}
-.pm-sig-img{background:#fff;border-radius:8px;padding:5px;display:inline-block}
-.pm-sig-img img{max-height:48px;display:block;border-radius:5px}
-/* chat (direita) */
-.pm-chat-head{padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0;font-size:11px;font-weight:900;color:#a78bfa;text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;gap:7px}
-.pm-chat-msgs{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:12px;min-height:0}
-.pm-actions-bar{flex-shrink:0;padding:14px 18px;border-top:1px solid rgba(255,255,255,0.07);background:rgba(8,4,20,0.7);display:flex;flex-direction:column;gap:10px}
-/* mensagens */
-.pm-divider{display:flex;align-items:center;gap:10px;padding:2px 0}
-.pm-divider-line{flex:1;height:1px;background:rgba(255,255,255,0.05)}
-.pm-divider-text{font-size:11px;color:#475569;font-style:italic;text-align:center;line-height:1.4}
-.pm-msg{display:flex;gap:10px}
-.pm-msg-r{flex-direction:row-reverse}
-.pm-av{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;margin-top:2px}
-.pm-av-c{background:#7c3aed;color:#fff}
-.pm-av-s{background:#1e293b;color:#94a3b8}
-.pm-msg-inner{display:flex;flex-direction:column;flex:1;min-width:0}
-.pm-msg-r .pm-msg-inner{align-items:flex-end}
-.pm-meta{font-size:11px;color:#475569;margin-bottom:4px}
-.pm-bubble{font-size:14px;line-height:1.55;padding:10px 14px;border-radius:14px;max-width:85%;word-break:break-word}
-.pm-bubble-c{background:rgba(109,40,217,0.4);color:#ddd6fe;border:1px solid rgba(109,40,217,0.35);border-top-right-radius:3px}
-.pm-bubble-s{background:rgba(10,12,28,0.95);color:#e2e8f0;border:1px solid rgba(255,255,255,0.07);border-top-left-radius:3px}
-/* mobile */
-@media(max-width:767px){
-  .pm-card{width:100vw;height:100dvh;border-radius:0;border:none}
-  .pm-body{flex-direction:column;overflow-y:auto;overflow-x:hidden}
-  .pm-left{width:100%;border-right:none;border-bottom:1px solid rgba(255,255,255,0.06);overflow-y:visible;padding:14px}
-  .pm-right{min-height:280px;overflow:hidden}
+*, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* ── ANIMATED BACKGROUND ──────────────────── */
+#bg-layer {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+}
+#bg-layer::before {
+  content: '';
+  position: absolute;
+  inset: -100px;
+  background-image:
+    linear-gradient(rgba(59,130,246,0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59,130,246,0.055) 1px, transparent 1px);
+  background-size: 64px 64px;
+  animation: gridDrift 22s linear infinite;
+}
+#bg-layer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 700px 600px at -10% -10%, rgba(37,99,235,0.12) 0%, transparent 65%),
+    radial-gradient(ellipse 500px 400px at 110% 110%, rgba(14,165,233,0.10) 0%, transparent 65%);
+  animation: orbDrift 14s ease-in-out infinite alternate;
+}
+@keyframes gridDrift {
+  from { transform: translate(0,0); }
+  to   { transform: translate(64px, 64px); }
+}
+@keyframes orbDrift {
+  from { opacity: 0.7; transform: scale(1); }
+  to   { opacity: 1;   transform: scale(1.08) translate(10px,-10px); }
+}
+
+/* ── VIEWS ──────────────────────────────── */
+.view { display: none; flex-direction: column; position: relative; z-index: 1; }
+.view.active { display: flex; animation: fadeUp 0.28s ease forwards; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── GLASS CARD ──────────────────────────── */
+.card {
+  background: var(--card);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+.card-2 {
+  background: rgba(4,10,28,0.85);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+/* ── INPUTS ──────────────────────────────── */
+.inp {
+  width: 100%;
+  background: rgba(4,10,28,0.85);
+  border: 1.5px solid rgba(59,130,246,0.15);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: var(--text);
+  font-size: 16px; /* mínimo 16px evita auto-zoom iOS Safari */
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+.inp:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(59,130,246,0.12); }
+.inp::placeholder { color: var(--text3); }
+select.inp { cursor: pointer; }
+textarea.inp { resize: none; }
+
+/* ── BUTTONS ──────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 12px 20px;
+  background: linear-gradient(135deg, var(--blue-d), var(--blue-dd));
+  color: #fff; font-weight: 700; font-size: 15px;
+  border: none; border-radius: 12px; cursor: pointer;
+  transition: all .2s; font-family: 'Inter', sans-serif; letter-spacing: .01em;
+}
+.btn:hover { background: linear-gradient(135deg, var(--blue), var(--blue-d)); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(37,99,235,.28); }
+.btn:active { transform: translateY(0); box-shadow: none; }
+.btn:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.btn-ghost {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 11px 20px;
+  background: rgba(59,130,246,0.08);
+  color: var(--blue-l); font-weight: 600; font-size: 14px;
+  border: 1.5px solid rgba(59,130,246,0.22); border-radius: 12px; cursor: pointer;
+  transition: all .2s; font-family: 'Inter', sans-serif;
+}
+.btn-ghost:hover { background: rgba(59,130,246,0.15); border-color: rgba(59,130,246,0.4); }
+
+.btn-sm {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600;
+  cursor: pointer; font-family: 'Inter', sans-serif; transition: all .15s;
+  background: linear-gradient(135deg, var(--blue-d), var(--blue-dd));
+  color: #fff; border: none; white-space: nowrap;
+}
+.btn-sm:hover { background: linear-gradient(135deg, var(--blue), var(--blue-d)); }
+
+.btn-danger { background: rgba(239,68,68,.1) !important; border: 1px solid rgba(239,68,68,.25) !important; color: #f87171 !important; }
+.btn-danger:hover { background: rgba(239,68,68,.2) !important; }
+.btn-success { background: rgba(16,185,129,.1); border: 1px solid rgba(16,185,129,.25); color: #34d399; border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all .15s; display: inline-flex; align-items: center; gap: 6px; }
+.btn-success:hover { background: rgba(16,185,129,.2); }
+
+/* ── LABEL ──────────────────────────────── */
+.lbl { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--text2); margin-bottom: 5px; }
+
+/* ── BADGES ──────────────────────────────── */
+.badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px; border-width: 1px; border-style: solid; }
+.badge-pendente  { color: #fbbf24; background: rgba(245,158,11,.12); border-color: rgba(245,158,11,.3); }
+.badge-aceito    { color: #34d399; background: rgba(16,185,129,.12); border-color: rgba(16,185,129,.3); }
+.badge-recusado  { color: #f87171; background: rgba(239,68,68,.12); border-color: rgba(239,68,68,.3); }
+.badge-reaberto  { color: #60a5fa; background: rgba(59,130,246,.12); border-color: rgba(59,130,246,.3); }
+.badge-fechado   { color: #94a3b8; background: rgba(100,116,139,.12); border-color: rgba(100,116,139,.3); }
+
+/* ── TOAST ──────────────────────────────── */
+#toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(12px);
+  z-index: 9999; padding: 10px 22px; border-radius: 999px;
+  font-size: 13px; font-weight: 600; opacity: 0;
+  pointer-events: none; transition: opacity .25s, transform .25s;
+  white-space: nowrap;
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── SCROLLBAR ──────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(59,130,246,.25); border-radius: 2px; }
+
+/* ── SIGNATURE PAD ──────────────────────── */
+.sig-canvas {
+  background: #f8fafc; border-radius: 10px;
+  border: 2px solid rgba(59,130,246,.18);
+  touch-action: none; cursor: crosshair;
+  display: block; width: 100%; height: 120px;
+}
+
+/* ═══════════════════════════════════════
+   VIEW: LANDING
+════════════════════════════════════════ */
+#view-cpf { min-height: 100dvh; align-items: center; justify-content: center; padding: 20px; }
+
+/* ═══════════════════════════════════════
+   VIEW: FORM
+════════════════════════════════════════ */
+#view-form { min-height: 100dvh; }
+.form-header {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(4,10,28,.92);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 12px;
+}
+.back-btn {
+  width: 36px; height: 36px; flex-shrink: 0; border-radius: 10px;
+  background: rgba(59,130,246,.08); border: 1px solid var(--border);
+  color: var(--text2); cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all .15s; font-size: 13px;
+}
+.back-btn:hover { background: rgba(59,130,246,.15); color: var(--text); }
+
+/* form-outer: mobile = coluna única | desktop = 2 colunas */
+.form-outer {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  padding-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.form-col { display: flex; flex-direction: column; gap: 12px; }
+
+@media (min-width: 900px) {
+  #view-form { overflow: hidden; height: 100dvh; }
+  .form-outer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    padding: 24px 32px 32px;
+    overflow: hidden;
+    flex: 1;
+    min-height: 0;
+  }
+  .form-col { overflow-y: auto; min-height: 0; padding-bottom: 8px; padding-right: 6px; }
+}
+
+.section-card { background: var(--card); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+.section-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; cursor: pointer; user-select: none; }
+.section-head:hover .section-title { color: var(--blue-l); }
+.section-icon-wrap { width: 28px; height: 28px; border-radius: 8px; background: rgba(59,130,246,.12); border: 1px solid rgba(59,130,246,.18); display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--blue-l); flex-shrink: 0; }
+.section-title { font-size: 13px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 10px; }
+.section-chevron { font-size: 11px; color: var(--text3); transition: transform .3s; }
+.section-chevron.open { transform: rotate(180deg); }
+.section-body { padding: 4px 16px 16px; display: flex; flex-direction: column; gap: 12px; }
+.hidden { display: none !important; }
+.section-body.hidden { display: none; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid-3 { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; }
+
+/* status-wrap: mobile = scroll único | desktop = 2 colunas */
+.status-wrap {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  padding-bottom: 32px;
+}
+.status-layout { display: flex; flex-direction: column; gap: 16px; }
+.status-col-right-inner { display: flex; flex-direction: column; gap: 12px; }
+
+@media (min-width: 900px) {
+  #view-status { overflow: hidden; height: 100dvh; }
+  .status-wrap {
+    flex: 1;
+    overflow: hidden;
+    padding: 24px 32px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+  #status-card {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .status-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .status-col-left { overflow-y: auto; min-height: 0; }
+  .status-col-right {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: rgba(7,18,45,.55);
+    border: 1px solid rgba(59,130,246,.12);
+    border-radius: 16px;
+    min-height: 0;
+  }
+  .status-chat-scroll { flex: 1; overflow-y: auto; padding: 18px; }
+  .status-input-area { flex-shrink: 0; padding: 14px 18px; border-top: 1px solid rgba(255,255,255,.05); }
+}
+
+/* ═══════════════════════════════════════
+   VIEW: STATUS (CLIENT)
+════════════════════════════════════════ */
+#view-status { min-height: 100dvh; }
+#view-status-loading, #view-status-vazio { min-height: 100dvh; align-items: center; justify-content: center; }
+
+.timeline-msg { display: flex; gap: 10px; }
+.timeline-msg.mine { flex-direction: row-reverse; }
+.t-av { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; margin-top: 2px; }
+.t-av-c { background: var(--blue-d); color: #fff; }
+.t-av-s { background: rgba(255,255,255,.06); color: var(--text2); }
+.t-bubble { font-size: 13px; line-height: 1.6; padding: 8px 12px; border-radius: 12px; max-width: 82%; word-break: break-word; }
+.t-bubble-c { background: rgba(37,99,235,.3); color: #bfdbfe; border: 1px solid rgba(37,99,235,.35); border-top-right-radius: 3px; }
+.t-bubble-s { background: rgba(255,255,255,.04); color: var(--text); border: 1px solid var(--border); border-top-left-radius: 3px; }
+.t-divider { display: flex; align-items: center; gap: 10px; padding: 2px 0; }
+.t-divider hr { flex: 1; border: none; height: 1px; }
+.t-divider-label { font-size: 11px; font-style: italic; text-align: center; line-height: 1.5; padding: 3px 12px; border-radius: 20px; border-width: 1px; border-style: solid; }
+
+/* ═══════════════════════════════════════
+   ADMIN LAYOUT
+════════════════════════════════════════ */
+#view-adm { min-height: 100dvh; flex-direction: row; }
+
+/* Sidebar */
+#adm-sidebar {
+  width: var(--sidebar); flex-shrink: 0;
+  background: rgba(4,10,28,.98);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  position: sticky; top: 0; height: 100dvh;
+}
+#adm-sidebar .sidebar-logo { padding: 20px 16px 16px; border-bottom: 1px solid var(--border); }
+#adm-sidebar .sidebar-nav { flex: 1; padding: 12px 10px; display: flex; flex-direction: column; gap: 4px; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 10px;
+  font-size: 14px; font-weight: 500; color: var(--text2);
+  cursor: pointer; transition: all .15s; border: 1px solid transparent;
+}
+.nav-item:hover { background: rgba(59,130,246,.08); color: var(--text); }
+.nav-item.active { background: rgba(59,130,246,.14); color: var(--blue-l); border-color: rgba(59,130,246,.2); font-weight: 700; }
+.nav-item i { width: 18px; text-align: center; font-size: 15px; flex-shrink: 0; }
+.sidebar-user { padding: 12px 16px; border-top: 1px solid var(--border); }
+.sidebar-logout { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-radius: 10px; font-size: 13px; font-weight: 600; color: var(--text3); cursor: pointer; transition: all .15s; }
+.sidebar-logout:hover { background: rgba(239,68,68,.08); color: #f87171; }
+
+/* Main content */
+#adm-main { flex: 1; display: flex; flex-direction: column; min-height: 100dvh; overflow: hidden; }
+#adm-topbar {
+  position: sticky; top: 0; z-index: 40;
+  background: rgba(4,10,28,.95);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 20px; display: flex; align-items: center; gap: 12px;
+}
+#adm-tab-content { flex: 1; overflow-y: auto; padding: 20px; }
+
+/* Stats */
+.stats-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+.stat-card { flex: 1; min-width: 80px; background: rgba(7,18,45,.7); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; text-align: center; }
+.stat-number { font-size: 26px; font-weight: 900; line-height: 1; }
+.stat-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--text3); margin-top: 4px; }
+
+/* Filter chips */
+.chip-row { display: flex; gap: 6px; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; margin-bottom: 14px; scrollbar-width: none; }
+.chip-row::-webkit-scrollbar { display: none; }
+.chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 600;
+  white-space: nowrap; cursor: pointer; transition: all .15s;
+  border: 1px solid var(--border); color: var(--text2); background: rgba(7,18,45,.6);
+}
+.chip.active { background: var(--blue-dd); border-color: var(--blue); color: #fff; }
+.chip:hover:not(.active) { border-color: var(--border-h); color: var(--text); }
+
+/* Order list */
+.order-card {
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(7,18,45,.7); border: 1px solid var(--border);
+  border-radius: 14px; padding: 14px 16px;
+  cursor: pointer; transition: all .15s; margin-bottom: 8px;
+  border-left-width: 3px;
+}
+.order-card:hover { background: rgba(59,130,246,.06); border-color: rgba(59,130,246,.25); }
+.order-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.order-info { flex: 1; min-width: 0; }
+.order-name { font-size: 14px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.order-doc  { font-size: 11px; color: var(--text3); font-family: monospace; margin-top: 2px; }
+.order-meta { display: flex; align-items: center; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+.order-right { flex-shrink: 0; text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+
+/* ── USERS TAB ──────────────────────────── */
+.users-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.user-card { background: rgba(7,18,45,.7); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+.user-avatar { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 900; margin-bottom: 10px; }
+.user-name { font-size: 15px; font-weight: 700; color: var(--text); }
+.user-role { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; margin-top: 2px; }
+
+/* Add user form */
+#add-user-form-wrap { background: rgba(7,18,45,.7); border: 1px solid rgba(59,130,246,.2); border-radius: 16px; padding: 20px; margin-top: 8px; }
+
+/* ── MOBILE BOTTOM NAV ─────────────────── */
+#adm-bottom-nav {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+  background: rgba(4,10,28,.98);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border);
+  padding: 8px 16px 12px;
+}
+.bnav-items { display: flex; justify-content: space-around; }
+.bnav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 16px; border-radius: 10px; cursor: pointer; transition: all .15s; color: var(--text3); font-size: 10px; font-weight: 600; }
+.bnav-item i { font-size: 18px; }
+.bnav-item.active { color: var(--blue-l); }
+
+/* ── MOBILE HEADER (admin) ─────────────── */
+#adm-mobile-header {
+  display: none;
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(4,10,28,.98);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px;
+  align-items: center; gap: 12px;
+}
+
+/* ── ORDER DETAIL PANEL ─────────────────── */
+#panel-pedido {
+  position: fixed; inset: 0; z-index: 200;
+  display: none; align-items: stretch;
+}
+#panel-pedido.open { display: flex; }
+.panel-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.65); backdrop-filter: blur(4px); cursor: pointer; }
+.panel-card {
+  position: absolute; right: 0; top: 0; bottom: 0;
+  width: 100%; max-width: 920px;
+  background: #07122a;
+  border-left: 1px solid var(--border);
+  transform: translateX(100%);
+  transition: transform .32s cubic-bezier(.16,1,.3,1);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+#panel-pedido.open .panel-card { transform: translateX(0); }
+
+.panel-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 14px; flex-shrink: 0; background: rgba(4,10,28,.8); }
+.panel-body { flex: 1; display: flex; overflow: hidden; }
+.panel-left { width: 46%; flex-shrink: 0; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; border-right: 1px solid var(--border); }
+.panel-right { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.panel-chat { flex: 1; overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+.panel-actions { flex-shrink: 0; padding: 14px 18px; border-top: 1px solid var(--border); background: rgba(4,10,28,.7); display: flex; flex-direction: column; gap: 10px; }
+
+.data-box { background: rgba(4,10,28,.8); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+.data-box-title { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--blue-l); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.data-row { display: flex; gap: 10px; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,.03); }
+.data-row:last-child { border: none; }
+.data-lbl { font-size: 12px; color: var(--text3); width: 70px; flex-shrink: 0; line-height: 1.5; }
+.data-val { font-size: 12px; color: var(--text); font-weight: 600; flex: 1; min-width: 0; word-break: break-word; line-height: 1.5; }
+
+.action-select { flex: 1; background: rgba(4,10,28,.9); border: 1px solid rgba(59,130,246,.2); border-radius: 8px; padding: 8px 12px; font-size: 13px; color: var(--text); outline: none; font-family: 'Inter', sans-serif; }
+.panel-textarea { width: 100%; background: rgba(4,10,28,.8); border: 1.5px solid rgba(59,130,246,.15); border-radius: 8px; padding: 9px 12px; font-size: 13px; color: var(--text); font-family: 'Inter', sans-serif; outline: none; resize: none; transition: border-color .2s; }
+.panel-textarea:focus { border-color: var(--blue); }
+
+/* Panel edit mode */
+.edit-inp { width: 100%; background: rgba(4,10,28,.9); border: 1px solid rgba(59,130,246,.15); border-radius: 8px; padding: 7px 10px; font-size: 13px; color: var(--text); font-family: 'Inter', sans-serif; outline: none; transition: border-color .2s; }
+.edit-inp:focus { border-color: var(--blue); }
+
+/* ── PULSE DOT ──────────────────────────── */
+.pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); animation: pulseAnim 2s infinite; }
+@keyframes pulseAnim { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+
+/* ── RESPONSIVE ─────────────────────────── */
+@media (max-width: 768px) {
+  #adm-sidebar { display: none !important; }
+  #adm-mobile-header { display: flex !important; }
+  #adm-bottom-nav { display: block !important; }
+  #adm-tab-content { padding: 14px 14px 80px; }
+  #adm-topbar { display: none !important; }
+  .stats-row { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; flex-shrink: 0; gap: 8px; }
+  .stat-card { min-width: 70px; }
+  .users-grid { grid-template-columns: 1fr 1fr; }
+  .panel-card { right: 0; bottom: 0; top: auto; height: 94dvh; max-width: 100%; width: 100%; border-radius: 20px 20px 0 0; border-left: none; border-top: 1px solid var(--border); transform: translateY(100%); }
+  #panel-pedido.open .panel-card { transform: translateY(0); }
+  .panel-body { flex-direction: column; overflow-y: auto; }
+  .panel-left { width: 100%; border-right: none; border-bottom: 1px solid var(--border); }
+  .panel-right { min-height: 300px; }
+}
+@media (min-width: 769px) {
+  #adm-topbar { display: flex !important; }
 }
 </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════════════
-     VIEW 1 — LANDING: CPF
-══════════════════════════════════════════════════════ -->
-<div id="view-cpf" class="view min-h-screen items-center justify-center p-5">
-    <div class="w-full max-w-sm">
-        <!-- Logo -->
-        <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-20 h-20 rounded-3xl mb-4" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)">
-                <i class="fas fa-wifi text-white text-3xl"></i>
-            </div>
-            <h1 class="text-2xl font-black text-white tracking-tight">Audicom</h1>
-            <p class="text-sm text-slate-400 mt-1">Solicite seu plano de internet</p>
+<div id="bg-layer"></div>
+<div id="toast"></div>
+
+<!-- ══════════════════════════════════════════
+     VIEW 1 — LANDING
+══════════════════════════════════════════ -->
+<div id="view-cpf" class="view">
+  <div style="width:100%;max-width:400px;margin:0 auto">
+
+    <div style="text-align:center;margin-bottom:32px">
+      <div style="width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,#2563eb,#1d4ed8);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 20px 40px rgba(37,99,235,.3)">
+        <i class="fas fa-wifi" style="font-size:28px;color:#fff"></i>
+      </div>
+      <h1 style="font-size:26px;font-weight:900;color:#fff;letter-spacing:-.02em">Audicom</h1>
+      <p style="font-size:14px;color:var(--text2);margin-top:6px">Portal de Pedidos de Internet</p>
+    </div>
+
+    <div class="card" style="padding:24px">
+      <div style="margin-bottom:20px">
+        <label class="lbl"><i class="fas fa-id-card" style="color:var(--blue-l);margin-right:4px"></i>CPF ou CNPJ do Titular</label>
+        <input id="inp-cpf" class="inp" type="text" inputmode="numeric" placeholder="000.000.000-00" maxlength="18"
+          style="font-size:18px;font-weight:700;text-align:center;letter-spacing:.05em"
+          oninput="onLandingDocInput(this)" onkeydown="if(event.key==='Enter')entrarCadastro()">
+        <p id="cpf-erro" class="hidden" style="color:#f87171;font-size:12px;margin-top:6px;text-align:center">
+          <i class="fas fa-exclamation-circle" style="margin-right:4px"></i><span></span>
+        </p>
+      </div>
+      <button class="btn" onclick="entrarCadastro()" style="margin-bottom:10px">
+        <i class="fas fa-file-signature"></i>Solicitar Internet
+      </button>
+      <button class="btn-ghost" onclick="entrarStatus()">
+        <i class="fas fa-search"></i>Acompanhar Pedido
+      </button>
+    </div>
+
+    <div style="text-align:center;margin-top:24px">
+      <button onclick="abrirAdmLogin()" style="font-size:12px;color:var(--text3);background:none;border:none;cursor:pointer;transition:color .15s" onmouseover="this.style.color='var(--text2)'" onmouseout="this.style.color='var(--text3)'">
+        <i class="fas fa-lock" style="margin-right:4px"></i>Acesso Interno
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     VIEW 2 — FORMULÁRIO
+══════════════════════════════════════════ -->
+<div id="view-form" class="view">
+
+  <div class="form-header">
+    <button class="back-btn" onclick="voltarCpf()"><i class="fas fa-arrow-left"></i></button>
+    <div style="flex:1;min-width:0">
+      <p style="font-size:13px;font-weight:800;color:#fff">Novo Pedido</p>
+      <p id="form-cpf-label" style="font-size:11px;color:var(--text3);font-family:monospace">—</p>
+    </div>
+    <div class="pulse-dot"></div>
+  </div>
+
+  <div class="form-outer">
+  <div class="form-col"><!-- coluna esquerda -->
+
+    <!-- Cabeçalho -->
+    <div class="section-card">
+      <div class="section-head" onclick="toggleSection('s-cab')">
+        <span class="section-title">
+          <span class="section-icon-wrap"><i class="fas fa-file-alt"></i></span>Cabeçalho
+        </span>
+        <i id="s-cab-chev" class="fas fa-chevron-down section-chevron open"></i>
+      </div>
+      <div id="s-cab-body" class="section-body">
+        <div class="grid-2">
+          <div><label class="lbl">Data de Emissão</label><input id="form-data" class="inp" type="text" placeholder="DD/MM/AAAA"></div>
+          <div><label class="lbl">A.C.</label><input id="form-ac" class="inp" type="text" placeholder="AC-001"></div>
         </div>
+      </div>
+    </div>
 
-        <!-- Card CPF -->
-        <div class="glass rounded-3xl p-6 space-y-4">
-            <div>
-                <label class="label"><i class="fas fa-id-card mr-1 text-violet-400"></i>CPF / CNPJ do Titular</label>
-                <input id="inp-cpf" type="text" inputmode="numeric" placeholder="000.000.000-00" maxlength="18"
-                    oninput="onLandingDocInput(this)"
-                    onkeydown="if(event.key==='Enter')entrarCadastro()"
-                    class="inp text-lg font-bold tracking-widest text-center">
-                <p id="cpf-erro" class="hidden text-rose-400 text-xs mt-1.5 text-center"><i class="fas fa-exclamation-circle mr-1"></i><span></span></p>
+    <!-- Dados do Cliente -->
+    <div class="section-card">
+      <div class="section-head" onclick="toggleSection('s-cli')">
+        <span class="section-title">
+          <span class="section-icon-wrap"><i class="fas fa-user"></i></span>Dados do Cliente
+        </span>
+        <i id="s-cli-chev" class="fas fa-chevron-down section-chevron open"></i>
+      </div>
+      <div id="s-cli-body" class="section-body">
+        <div><label class="lbl">Nome / Razão Social *</label><input id="form-nome" class="inp" type="text" placeholder="Nome completo" autocomplete="name"></div>
+        <div class="grid-2">
+          <div><label class="lbl">CPF / CNPJ *</label><input id="form-cpf" class="inp" type="text" inputmode="numeric" maxlength="18" oninput="onDocInput(this)" style="font-family:monospace"></div>
+          <div><label class="lbl">RG / I.E.</label><input id="form-rg" class="inp" type="text" placeholder="RG ou I.E."></div>
+        </div>
+        <div class="grid-2">
+          <div><label class="lbl">Celular *</label><input id="form-cel" class="inp" type="tel" inputmode="numeric" placeholder="(00) 00000-0000" maxlength="15" oninput="onPhoneInput(this)"></div>
+          <div><label class="lbl">Celular Alt.</label><input id="form-cel2" class="inp" type="tel" inputmode="numeric" placeholder="(00) 00000-0000" maxlength="15" oninput="onPhoneInput(this)"></div>
+        </div>
+        <div><label class="lbl">E-mail</label><input id="form-email" class="inp" type="email" placeholder="email@exemplo.com" autocomplete="email"></div>
+      </div>
+    </div>
+
+    <!-- Endereço de Instalação -->
+    <div class="section-card">
+      <div class="section-head" onclick="toggleSection('s-inst')">
+        <span class="section-title">
+          <span class="section-icon-wrap"><i class="fas fa-map-marker-alt"></i></span>Endereço de Instalação
+        </span>
+        <i id="s-inst-chev" class="fas fa-chevron-down section-chevron open"></i>
+      </div>
+      <div id="s-inst-body" class="section-body">
+        <div class="grid-3">
+          <div>
+            <label class="lbl">CEP</label>
+            <div style="position:relative">
+              <input id="inst-cep" class="inp" type="text" inputmode="numeric" maxlength="9" placeholder="00000-000" oninput="onCepInput(this,'inst')" style="padding-right:36px">
+              <i id="inst-cep-spin" class="fas fa-spinner fa-spin hidden" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--blue-l);font-size:12px"></i>
             </div>
-
-            <button onclick="entrarCadastro()" class="btn-primary">
-                <i class="fas fa-file-signature"></i>Cadastrar Pedido
+            <p id="inst-cep-erro" class="hidden" style="color:#f87171;font-size:11px;margin-top:4px"></p>
+          </div>
+          <div>
+            <label class="lbl">UF</label>
+            <select id="inst-uf" class="inp">
+              <option value="">—</option>
+              <option>AC</option><option>AL</option><option>AM</option><option>AP</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MG</option><option>MS</option><option>MT</option><option>PA</option><option>PB</option><option>PE</option><option>PI</option><option>PR</option><option>RJ</option><option>RN</option><option>RO</option><option>RR</option><option>RS</option><option>SC</option><option>SE</option><option>SP</option><option>TO</option>
+            </select>
+          </div>
+        </div>
+        <div><label class="lbl">Endereço *</label><input id="inst-end" class="inp" type="text" placeholder="Rua, Av., Travessa..."></div>
+        <div class="grid-2">
+          <div><label class="lbl">Número *</label><input id="inst-num" class="inp" type="text" placeholder="Nº"></div>
+          <div><label class="lbl">Bairro</label><input id="inst-bairro" class="inp" type="text" placeholder="Bairro"></div>
+        </div>
+        <div><label class="lbl">Cidade *</label><input id="inst-cidade" class="inp" type="text" placeholder="Cidade"></div>
+        <div><label class="lbl">Complemento</label><input id="inst-comp" class="inp" type="text" placeholder="Apto, bloco, referência..."></div>
+        <div>
+          <label class="lbl"><i class="fas fa-map-pin" style="color:var(--blue-l);margin-right:4px"></i>GPS</label>
+          <div style="display:flex;gap:8px">
+            <input id="inst-coords" class="inp" type="text" placeholder="-00.000000, -00.000000" style="font-family:monospace;font-size:12px">
+            <button id="inst-gps-btn" onclick="pegarLocalizacao('inst')" title="Usar GPS"
+              style="width:40px;height:40px;flex-shrink:0;border-radius:10px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.25);color:var(--blue-l);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s"
+              onmouseover="this.style.background='rgba(59,130,246,.2)'" onmouseout="this.style.background='rgba(59,130,246,.1)'">
+              <i class="fas fa-crosshairs"></i>
             </button>
-            <button onclick="entrarStatus()" class="btn-secondary">
-                <i class="fas fa-search"></i>Ver Status do Pedido
-            </button>
+          </div>
         </div>
-
-        <!-- ADM link -->
-        <div class="text-center mt-6">
-            <button onclick="abrirAdmLogin()" class="text-xs text-slate-600 hover:text-slate-400 transition">
-                <i class="fas fa-lock mr-1"></i>Painel ADM
-            </button>
-        </div>
+      </div>
     </div>
-</div>
 
-<!-- ══════════════════════════════════════════════════════
-     VIEW 2 — FORMULÁRIO DE PEDIDO
-══════════════════════════════════════════════════════ -->
-<div id="view-form" class="view min-h-screen">
-    <!-- Header fixo -->
-    <header class="sticky top-0 z-40 glass border-b border-violet-500/10 px-4 py-3 flex items-center gap-3">
-        <button onclick="voltarCpf()" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition flex-shrink-0">
-            <i class="fas fa-arrow-left text-sm"></i>
+    <!-- Endereço de Correspondência -->
+    <div class="section-card">
+      <div class="section-head" onclick="toggleSection('s-corr')">
+        <span class="section-title">
+          <span class="section-icon-wrap"><i class="fas fa-envelope"></i></span>Correspondência
+        </span>
+        <i id="s-corr-chev" class="fas fa-chevron-down section-chevron"></i>
+      </div>
+      <div id="s-corr-body" class="section-body hidden">
+        <button onclick="copiarEndereco()" style="width:100%;padding:9px;border-radius:10px;border:1px dashed rgba(59,130,246,.3);background:transparent;color:var(--blue-l);font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px" onmouseover="this.style.background='rgba(59,130,246,.08)'" onmouseout="this.style.background='transparent'">
+          <i class="fas fa-copy" style="font-size:11px"></i>Copiar endereço de instalação
         </button>
-        <div class="flex-1 min-w-0">
-            <h2 class="font-black text-sm text-white">Novo Pedido</h2>
-            <p class="text-[11px] text-slate-400" id="form-cpf-label">—</p>
+        <div class="grid-3">
+          <div>
+            <label class="lbl">CEP</label>
+            <div style="position:relative">
+              <input id="corr-cep" class="inp" type="text" inputmode="numeric" maxlength="9" placeholder="00000-000" oninput="onCepInput(this,'corr')" style="padding-right:36px">
+              <i id="corr-cep-spin" class="fas fa-spinner fa-spin hidden" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--blue-l);font-size:12px"></i>
+            </div>
+            <p id="corr-cep-erro" class="hidden" style="color:#f87171;font-size:11px;margin-top:4px"></p>
+          </div>
+          <div><label class="lbl">UF</label>
+            <select id="corr-uf" class="inp">
+              <option value="">—</option>
+              <option>AC</option><option>AL</option><option>AM</option><option>AP</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MG</option><option>MS</option><option>MT</option><option>PA</option><option>PB</option><option>PE</option><option>PI</option><option>PR</option><option>RJ</option><option>RN</option><option>RO</option><option>RR</option><option>RS</option><option>SC</option><option>SE</option><option>SP</option><option>TO</option>
+            </select>
+          </div>
         </div>
-        <div class="w-2 h-2 rounded-full bg-violet-500 pulse"></div>
-    </header>
-
-    <div class="flex-1 overflow-y-auto px-4 py-5 max-w-lg mx-auto w-full space-y-3 pb-10">
-
-        <!-- ── CABEÇALHO ── -->
-        <div class="glass rounded-2xl overflow-hidden">
-            <div class="sec-header px-4" onclick="toggleSec('sec-cab')">
-                <span class="sec-title font-bold text-sm flex items-center gap-2 text-slate-200">
-                    <span class="w-6 h-6 rounded-lg bg-violet-600/30 flex items-center justify-center text-violet-400 text-xs"><i class="fas fa-file-alt"></i></span>
-                    Cabeçalho
-                </span>
-                <i id="sec-cab-icon" class="fas fa-chevron-down sec-icon rotate-180"></i>
-            </div>
-            <div id="sec-cab-body" class="px-4 pb-4 pt-3 grid grid-cols-2 gap-3">
-                <div>
-                    <label class="label">Data de Emissão</label>
-                    <input id="form-data" type="text" placeholder="DD/MM/AAAA" class="inp">
-                </div>
-                <div>
-                    <label class="label">A.C.</label>
-                    <input id="form-ac" type="text" placeholder="Ex: AC-001" class="inp">
-                </div>
-            </div>
+        <div><label class="lbl">Endereço</label><input id="corr-end" class="inp" type="text" placeholder="Rua, Av..."></div>
+        <div class="grid-2">
+          <div><label class="lbl">Número</label><input id="corr-num" class="inp" type="text" placeholder="Nº"></div>
+          <div><label class="lbl">Bairro</label><input id="corr-bairro" class="inp" type="text" placeholder="Bairro"></div>
         </div>
-
-        <!-- ── DADOS DO CLIENTE ── -->
-        <div class="glass rounded-2xl overflow-hidden">
-            <div class="sec-header px-4" onclick="toggleSec('sec-cli')">
-                <span class="sec-title font-bold text-sm flex items-center gap-2 text-slate-200">
-                    <span class="w-6 h-6 rounded-lg bg-violet-600/30 flex items-center justify-center text-violet-400 text-xs"><i class="fas fa-user"></i></span>
-                    Dados do Cliente
-                </span>
-                <i id="sec-cli-icon" class="fas fa-chevron-down sec-icon rotate-180"></i>
-            </div>
-            <div id="sec-cli-body" class="px-4 pb-4 pt-3 space-y-3">
-                <div>
-                    <label class="label">Nome / Razão Social *</label>
-                    <input id="form-nome" type="text" placeholder="Nome completo ou razão social" class="inp" autocomplete="name">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="label">CPF / CNPJ *</label>
-                        <input id="form-cpf" type="text" inputmode="numeric" maxlength="18" placeholder="000.000.000-00"
-                            oninput="onDocInput(this)" class="inp font-mono">
-                    </div>
-                    <div>
-                        <label class="label">RG / I.E.</label>
-                        <input id="form-rg" type="text" placeholder="RG ou Insc. Estadual" class="inp">
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="label">Celular *</label>
-                        <input id="form-cel" type="tel" inputmode="numeric" placeholder="(00) 00000-0000" maxlength="15"
-                            oninput="onPhoneInput(this)" class="inp">
-                    </div>
-                    <div>
-                        <label class="label">Celular Alternativo</label>
-                        <input id="form-cel2" type="tel" inputmode="numeric" placeholder="(00) 00000-0000" maxlength="15"
-                            oninput="onPhoneInput(this)" class="inp">
-                    </div>
-                </div>
-                <div>
-                    <label class="label">E-mail</label>
-                    <input id="form-email" type="email" inputmode="email" placeholder="seuemail@exemplo.com" class="inp" autocomplete="email">
-                </div>
-            </div>
-        </div>
-
-        <!-- ── ENDEREÇO DE INSTALAÇÃO ── -->
-        <div class="glass rounded-2xl overflow-hidden">
-            <div class="sec-header px-4" onclick="toggleSec('sec-inst')">
-                <span class="sec-title font-bold text-sm flex items-center gap-2 text-slate-200">
-                    <span class="w-6 h-6 rounded-lg bg-violet-600/30 flex items-center justify-center text-violet-400 text-xs"><i class="fas fa-map-marker-alt"></i></span>
-                    Endereço de Instalação
-                </span>
-                <i id="sec-inst-icon" class="fas fa-chevron-down sec-icon rotate-180"></i>
-            </div>
-            <div id="sec-inst-body" class="px-4 pb-4 pt-3 space-y-3">
-                <div class="grid grid-cols-3 gap-3 items-end">
-                    <div class="col-span-2">
-                        <label class="label">CEP</label>
-                        <div class="relative">
-                            <input id="inst-cep" type="text" inputmode="numeric" maxlength="9" placeholder="00000-000"
-                                oninput="onCepInput(this,'inst')" class="inp pr-8">
-                            <i id="inst-cep-spin" class="fas fa-spinner fa-spin absolute right-3 top-1/2 -translate-y-1/2 text-violet-400 hidden text-xs"></i>
-                        </div>
-                        <p id="inst-cep-erro" class="hidden text-rose-400 text-[11px] mt-1"></p>
-                    </div>
-                    <div>
-                        <label class="label">UF</label>
-                        <select id="inst-uf" class="inp">
-                            <option value="">—</option>
-                            <option>AC</option><option>AL</option><option>AM</option><option>AP</option>
-                            <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
-                            <option>GO</option><option>MA</option><option>MG</option><option>MS</option>
-                            <option>MT</option><option>PA</option><option>PB</option><option>PE</option>
-                            <option>PI</option><option>PR</option><option>RJ</option><option>RN</option>
-                            <option>RO</option><option>RR</option><option>RS</option><option>SC</option>
-                            <option>SE</option><option>SP</option><option>TO</option>
-                        </select>
-                    </div>
-                </div>
-                <div>
-                    <label class="label">Endereço *</label>
-                    <input id="inst-end" type="text" placeholder="Rua, Avenida, Travessa..." class="inp">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="label">Número *</label>
-                        <input id="inst-num" type="text" placeholder="Nº" class="inp">
-                    </div>
-                    <div>
-                        <label class="label">Bairro</label>
-                        <input id="inst-bairro" type="text" placeholder="Bairro" class="inp">
-                    </div>
-                </div>
-                <div>
-                    <label class="label">Cidade *</label>
-                    <input id="inst-cidade" type="text" placeholder="Cidade" class="inp">
-                </div>
-                <div>
-                    <label class="label">Complemento / Obs</label>
-                    <input id="inst-comp" type="text" placeholder="Apto, bloco, referência..." class="inp">
-                </div>
-                <div>
-                    <label class="label"><i class="fas fa-map-pin mr-1 text-violet-400"></i>Localização GPS</label>
-                    <div class="flex gap-2">
-                        <input id="inst-coords" type="text" placeholder="-00.000000, -00.000000" class="inp flex-1 font-mono text-xs">
-                        <button id="inst-gps-btn" onclick="pegarLocalizacao('inst')"
-                            class="w-10 h-10 flex-shrink-0 rounded-xl bg-violet-700/30 border border-violet-500/30 text-violet-400 hover:bg-violet-700/50 transition flex items-center justify-center" title="Usar GPS">
-                            <i class="fas fa-map-pin text-sm"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ── ENDEREÇO DE CORRESPONDÊNCIA ── -->
-        <div class="glass rounded-2xl overflow-hidden">
-            <div class="sec-header px-4" onclick="toggleSec('sec-corr')">
-                <span class="sec-title font-bold text-sm flex items-center gap-2 text-slate-200">
-                    <span class="w-6 h-6 rounded-lg bg-violet-600/30 flex items-center justify-center text-violet-400 text-xs"><i class="fas fa-envelope"></i></span>
-                    Endereço de Correspondência
-                </span>
-                <i id="sec-corr-icon" class="fas fa-chevron-down sec-icon"></i>
-            </div>
-            <div id="sec-corr-body" class="hidden px-4 pb-4 pt-3 space-y-3">
-                <button onclick="copiarEndereco()" class="w-full py-2 rounded-xl border border-dashed border-violet-500/40 text-violet-400 text-xs font-bold hover:bg-violet-500/10 transition flex items-center justify-center gap-2">
-                    <i class="fas fa-copy text-[11px]"></i>Copiar endereço de instalação
-                </button>
-                <div class="grid grid-cols-3 gap-3 items-end">
-                    <div class="col-span-2">
-                        <label class="label">CEP</label>
-                        <div class="relative">
-                            <input id="corr-cep" type="text" inputmode="numeric" maxlength="9" placeholder="00000-000"
-                                oninput="onCepInput(this,'corr')" class="inp pr-8">
-                            <i id="corr-cep-spin" class="fas fa-spinner fa-spin absolute right-3 top-1/2 -translate-y-1/2 text-violet-400 hidden text-xs"></i>
-                        </div>
-                        <p id="corr-cep-erro" class="hidden text-rose-400 text-[11px] mt-1"></p>
-                    </div>
-                    <div>
-                        <label class="label">UF</label>
-                        <select id="corr-uf" class="inp">
-                            <option value="">—</option>
-                            <option>AC</option><option>AL</option><option>AM</option><option>AP</option>
-                            <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
-                            <option>GO</option><option>MA</option><option>MG</option><option>MS</option>
-                            <option>MT</option><option>PA</option><option>PB</option><option>PE</option>
-                            <option>PI</option><option>PR</option><option>RJ</option><option>RN</option>
-                            <option>RO</option><option>RR</option><option>RS</option><option>SC</option>
-                            <option>SE</option><option>SP</option><option>TO</option>
-                        </select>
-                    </div>
-                </div>
-                <div>
-                    <label class="label">Endereço</label>
-                    <input id="corr-end" type="text" placeholder="Rua, Avenida..." class="inp">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="label">Número</label>
-                        <input id="corr-num" type="text" placeholder="Nº" class="inp">
-                    </div>
-                    <div>
-                        <label class="label">Bairro</label>
-                        <input id="corr-bairro" type="text" placeholder="Bairro" class="inp">
-                    </div>
-                </div>
-                <div>
-                    <label class="label">Cidade</label>
-                    <input id="corr-cidade" type="text" placeholder="Cidade" class="inp">
-                </div>
-                <div>
-                    <label class="label">Complemento</label>
-                    <input id="corr-comp" type="text" placeholder="Apto, referência..." class="inp">
-                </div>
-            </div>
-        </div>
-
-        <!-- ── DADOS DO SERVIÇO ── -->
-        <div class="glass rounded-2xl overflow-hidden">
-            <div class="sec-header px-4" onclick="toggleSec('sec-sv')">
-                <span class="sec-title font-bold text-sm flex items-center gap-2 text-slate-200">
-                    <span class="w-6 h-6 rounded-lg bg-violet-600/30 flex items-center justify-center text-violet-400 text-xs"><i class="fas fa-wifi"></i></span>
-                    Dados do Serviço / Plano
-                </span>
-                <i id="sec-sv-icon" class="fas fa-chevron-down sec-icon rotate-180"></i>
-            </div>
-            <div id="sec-sv-body" class="px-4 pb-4 pt-3 space-y-3">
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="label">Plano Mensal</label>
-                        <input id="sv-plano" type="text" placeholder="Ex: Fibra 500MB" list="lista-planos" class="inp">
-                        <datalist id="lista-planos">
-                            <option value="Fibra 100MB"><option value="Fibra 200MB">
-                            <option value="Fibra 500MB"><option value="Fibra 1GB">
-                            <option value="Rádio 10MB"><option value="Rádio 20MB">
-                        </datalist>
-                    </div>
-                    <div>
-                        <label class="label">Pacote</label>
-                        <input id="sv-pacote" type="text" placeholder="Ex: Residencial" list="lista-pacotes" class="inp">
-                        <datalist id="lista-pacotes">
-                            <option value="Residencial"><option value="Empresarial">
-                            <option value="Plus"><option value="Premium">
-                        </datalist>
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="label">Valor Mensal</label>
-                        <input id="sv-valor" type="text" inputmode="numeric" placeholder="R$ 0,00"
-                            oninput="maskMoeda(this)" class="inp font-mono">
-                    </div>
-                    <div>
-                        <label class="label">Valor da Instalação</label>
-                        <input id="sv-valor-inst" type="text" inputmode="numeric" placeholder="R$ 0,00"
-                            oninput="maskMoeda(this)" class="inp font-mono">
-                    </div>
-                </div>
-                <div>
-                    <label class="label">Forma de Pagamento</label>
-                    <select id="sv-pagamento" class="inp">
-                        <option value="">Selecione...</option>
-                        <option>Boleto Bancário</option>
-                        <option>PIX</option>
-                        <option>Cartão de Crédito</option>
-                        <option>Cartão de Débito</option>
-                        <option>Débito em Conta</option>
-                        <option>Dinheiro</option>
-                    </select>
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="label">Data de Instalação</label>
-                        <input id="sv-data-inst" type="date" class="inp">
-                    </div>
-                    <div>
-                        <label class="label">Horário</label>
-                        <input id="sv-hora" type="time" class="inp">
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="label">Técnico</label>
-                        <input id="sv-tecnico" type="text" placeholder="Nome do técnico" class="inp">
-                    </div>
-                    <div>
-                        <label class="label">KIT</label>
-                        <input id="sv-kit" type="text" placeholder="Ex: KIT-001" class="inp">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ── TERMOS E ASSINATURAS ── -->
-        <div class="glass rounded-2xl overflow-hidden">
-            <div class="sec-header px-4" onclick="toggleSec('sec-sig')">
-                <span class="sec-title font-bold text-sm flex items-center gap-2 text-slate-200">
-                    <span class="w-6 h-6 rounded-lg bg-violet-600/30 flex items-center justify-center text-violet-400 text-xs"><i class="fas fa-signature"></i></span>
-                    Termos e Assinaturas
-                </span>
-                <i id="sec-sig-icon" class="fas fa-chevron-down sec-icon rotate-180"></i>
-            </div>
-            <div id="sec-sig-body" class="px-4 pb-4 pt-3 space-y-5">
-                <div class="bg-slate-800/40 rounded-xl p-3 text-xs text-slate-400 leading-relaxed border border-violet-500/10">
-                    <i class="fas fa-info-circle text-violet-400 mr-1"></i>
-                    Ao assinar, o contratante declara estar ciente das condições do plano contratado, dos termos de uso e da política de privacidade da Audicom Telecom. O cancelamento pode ser solicitado com aviso prévio de 30 dias.
-                </div>
-                <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <label class="label mb-0">Assinatura do Cliente</label>
-                        <button onclick="limparSig('sig-cliente')" class="text-[11px] text-slate-500 hover:text-rose-400 transition underline">Limpar</button>
-                    </div>
-                    <canvas id="sig-cliente" class="sig-pad"></canvas>
-                    <p class="text-[10px] text-slate-600 mt-1 text-center">Assine com o dedo ou mouse na área acima</p>
-                </div>
-                <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <label class="label mb-0">Assinatura do Vendedor</label>
-                        <button onclick="limparSig('sig-vendedor')" class="text-[11px] text-slate-500 hover:text-rose-400 transition underline">Limpar</button>
-                    </div>
-                    <canvas id="sig-vendedor" class="sig-pad"></canvas>
-                    <p class="text-[10px] text-slate-600 mt-1 text-center">Vendedor assina na área acima</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- ENVIAR -->
-        <button id="btn-enviar" onclick="enviarPedido()" class="btn-primary text-base mt-2">
-            <i class="fas fa-paper-plane"></i>Enviar Pedido
-        </button>
+        <div><label class="lbl">Cidade</label><input id="corr-cidade" class="inp" type="text" placeholder="Cidade"></div>
+        <div><label class="lbl">Complemento</label><input id="corr-comp" class="inp" type="text" placeholder="Complemento"></div>
+      </div>
     </div>
+
+  </div><!-- /coluna esquerda -->
+  <div class="form-col"><!-- coluna direita -->
+
+    <!-- Serviço -->
+    <div class="section-card">
+      <div class="section-head" onclick="toggleSection('s-sv')">
+        <span class="section-title">
+          <span class="section-icon-wrap"><i class="fas fa-wifi"></i></span>Plano / Serviço
+        </span>
+        <i id="s-sv-chev" class="fas fa-chevron-down section-chevron open"></i>
+      </div>
+      <div id="s-sv-body" class="section-body">
+        <div class="grid-2">
+          <div>
+            <label class="lbl">Plano</label>
+            <input id="sv-plano" class="inp" type="text" placeholder="Fibra 500MB" list="lista-planos">
+            <datalist id="lista-planos"><option value="Fibra 100MB"><option value="Fibra 200MB"><option value="Fibra 500MB"><option value="Fibra 1GB"><option value="Rádio 10MB"><option value="Rádio 20MB"></datalist>
+          </div>
+          <div>
+            <label class="lbl">Pacote</label>
+            <input id="sv-pacote" class="inp" type="text" placeholder="Residencial" list="lista-pacotes">
+            <datalist id="lista-pacotes"><option value="Residencial"><option value="Empresarial"><option value="Plus"><option value="Premium"></datalist>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div><label class="lbl">Mensalidade</label><input id="sv-valor" class="inp" type="text" inputmode="numeric" placeholder="R$ 0,00" oninput="maskMoeda(this)" style="font-family:monospace"></div>
+          <div><label class="lbl">Instalação</label><input id="sv-valor-inst" class="inp" type="text" inputmode="numeric" placeholder="R$ 0,00" oninput="maskMoeda(this)" style="font-family:monospace"></div>
+        </div>
+        <div>
+          <label class="lbl">Forma de Pagamento</label>
+          <select id="sv-pagamento" class="inp">
+            <option value="">Selecione...</option>
+            <option>Boleto Bancário</option><option>PIX</option><option>Cartão de Crédito</option><option>Cartão de Débito</option><option>Débito em Conta</option><option>Dinheiro</option>
+          </select>
+        </div>
+        <div class="grid-2">
+          <div><label class="lbl">Data de Instalação</label><input id="sv-data-inst" class="inp" type="date"></div>
+          <div><label class="lbl">Horário</label><input id="sv-hora" class="inp" type="time"></div>
+        </div>
+        <div class="grid-2">
+          <div><label class="lbl">Técnico</label><input id="sv-tecnico" class="inp" type="text" placeholder="Nome"></div>
+          <div><label class="lbl">KIT</label><input id="sv-kit" class="inp" type="text" placeholder="KIT-001"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Assinaturas -->
+    <div class="section-card">
+      <div class="section-head" onclick="toggleSection('s-sig')">
+        <span class="section-title">
+          <span class="section-icon-wrap"><i class="fas fa-signature"></i></span>Assinaturas
+        </span>
+        <i id="s-sig-chev" class="fas fa-chevron-down section-chevron open"></i>
+      </div>
+      <div id="s-sig-body" class="section-body">
+        <div style="background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.14);border-radius:10px;padding:12px;font-size:12px;color:var(--text2);line-height:1.6">
+          <i class="fas fa-info-circle" style="color:var(--blue-l);margin-right:6px"></i>
+          Ao assinar, o contratante declara estar ciente das condições do plano e dos termos de uso da Audicom Telecom.
+        </div>
+        <div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <label class="lbl" style="margin:0">Assinatura do Cliente</label>
+            <button onclick="limparSig('sig-cliente')" style="font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;text-decoration:underline;font-family:'Inter',sans-serif">Limpar</button>
+          </div>
+          <canvas id="sig-cliente" class="sig-canvas"></canvas>
+          <p style="font-size:10px;color:var(--text3);text-align:center;margin-top:5px">Assine com o dedo ou mouse</p>
+        </div>
+        <div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <label class="lbl" style="margin:0">Assinatura do Vendedor</label>
+            <button onclick="limparSig('sig-vendedor')" style="font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;text-decoration:underline;font-family:'Inter',sans-serif">Limpar</button>
+          </div>
+          <canvas id="sig-vendedor" class="sig-canvas"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <button id="btn-enviar" class="btn" onclick="enviarPedido()" style="font-size:16px;padding:14px">
+      <i class="fas fa-paper-plane"></i>Enviar Pedido
+    </button>
+
+  </div><!-- /coluna direita -->
+  </div><!-- /form-outer -->
+</div><!-- /view-form -->
+
+<!-- ══════════════════════════════════════════
+     VIEW 3a — STATUS LOADING
+══════════════════════════════════════════ -->
+<div id="view-status-loading" class="view">
+  <div style="text-align:center">
+    <i class="fas fa-spinner fa-spin" style="font-size:36px;color:var(--blue-l);display:block;margin-bottom:14px"></i>
+    <p style="color:var(--text2);font-size:14px">Buscando seu pedido...</p>
+  </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════
-     VIEW 3a — STATUS: carregando
-══════════════════════════════════════════════════════ -->
-<div id="view-status-loading" class="view min-h-screen items-center justify-center">
-    <div class="text-center">
-        <i class="fas fa-spinner fa-spin text-4xl text-violet-400 mb-4 block"></i>
-        <p class="text-slate-400">Buscando seu pedido...</p>
+<!-- ══════════════════════════════════════════
+     VIEW 3b — STATUS VAZIO
+══════════════════════════════════════════ -->
+<div id="view-status-vazio" class="view">
+  <div style="text-align:center;max-width:320px;margin:0 auto;padding:20px">
+    <div style="width:72px;height:72px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;margin:0 auto 20px">
+      <i class="fas fa-folder-open" style="font-size:28px;color:var(--text3)"></i>
     </div>
+    <h3 style="font-size:20px;font-weight:800;color:#fff;margin-bottom:8px">Nenhum pedido encontrado</h3>
+    <p style="font-size:14px;color:var(--text2);margin-bottom:24px">Não encontramos pedidos para este CPF/CNPJ.</p>
+    <button class="btn" onclick="voltarCpf()" style="margin-bottom:10px"><i class="fas fa-arrow-left"></i>Voltar</button>
+    <button class="btn-ghost" onclick="entrarCadastro()"><i class="fas fa-file-signature"></i>Fazer novo pedido</button>
+  </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════
-     VIEW 3b — STATUS: vazio
-══════════════════════════════════════════════════════ -->
-<div id="view-status-vazio" class="view min-h-screen items-center justify-center p-5">
-    <div class="w-full max-w-sm text-center">
-        <div class="w-20 h-20 rounded-3xl bg-slate-800 flex items-center justify-center mx-auto mb-5">
-            <i class="fas fa-folder-open text-3xl text-slate-500"></i>
-        </div>
-        <h3 class="font-black text-xl text-white mb-2">Nenhum pedido encontrado</h3>
-        <p class="text-sm text-slate-400 mb-6">Não encontramos pedidos associados a este CPF/CNPJ.</p>
-        <button onclick="voltarCpf()" class="btn-primary">
-            <i class="fas fa-arrow-left"></i>Voltar
-        </button>
-        <div class="mt-3">
-            <button onclick="entrarCadastro()" class="btn-secondary">
-                <i class="fas fa-file-signature"></i>Fazer novo pedido
-            </button>
-        </div>
-    </div>
+<!-- ══════════════════════════════════════════
+     VIEW 3c — STATUS RESULTADO
+══════════════════════════════════════════ -->
+<div id="view-status" class="view">
+  <div class="form-header">
+    <button class="back-btn" onclick="voltarCpf()"><i class="fas fa-arrow-left"></i></button>
+    <p style="font-size:13px;font-weight:800;color:#fff;flex:1">Status do Pedido</p>
+  </div>
+  <div class="status-wrap">
+    <div id="status-card"></div>
+  </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════
-     VIEW 3c — STATUS: resultado
-══════════════════════════════════════════════════════ -->
-<div id="view-status" class="view min-h-screen">
-    <header class="sticky top-0 z-40 glass border-b border-violet-500/10 px-4 py-3 flex items-center gap-3">
-        <button onclick="voltarCpf()" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition">
-            <i class="fas fa-arrow-left text-sm"></i>
-        </button>
-        <h2 class="font-black text-sm text-white flex-1">Status do Pedido</h2>
-    </header>
-    <div class="flex-1 overflow-y-auto p-4 max-w-lg mx-auto w-full">
-        <div id="status-card" class="glass rounded-2xl p-5 pb-6"></div>
-    </div>
-</div>
-
-<!-- ══════════════════════════════════════════════════════
+<!-- ══════════════════════════════════════════
      VIEW 4 — SUCESSO
-══════════════════════════════════════════════════════ -->
-<div id="view-sucesso" class="view min-h-screen items-center justify-center p-5">
-    <div class="w-full max-w-sm text-center">
-        <div class="w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-6" style="background:linear-gradient(135deg,#059669,#047857)">
-            <i class="fas fa-check text-white text-4xl"></i>
-        </div>
-        <h3 class="font-black text-2xl text-white mb-2">Pedido Enviado!</h3>
-        <p class="text-slate-400 text-sm mb-2">Seu pedido foi registrado com sucesso.</p>
-        <p class="text-slate-500 text-xs mb-8">Em breve nossa equipe entrará em contato para confirmar os detalhes da instalação.</p>
-        <button onclick="entrarStatus()" class="btn-primary mb-3">
-            <i class="fas fa-search"></i>Acompanhar Pedido
-        </button>
-        <button onclick="voltarCpf()" class="btn-secondary">
-            <i class="fas fa-home"></i>Início
-        </button>
+══════════════════════════════════════════ -->
+<div id="view-sucesso" class="view" style="min-height:100dvh;align-items:center;justify-content:center">
+  <div style="text-align:center;max-width:360px;margin:0 auto;padding:24px">
+    <div style="width:88px;height:88px;border-radius:24px;background:linear-gradient(135deg,#059669,#047857);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;box-shadow:0 20px 40px rgba(5,150,105,.3)">
+      <i class="fas fa-check" style="font-size:36px;color:#fff"></i>
     </div>
+    <h3 style="font-size:26px;font-weight:900;color:#fff;margin-bottom:8px">Pedido Enviado!</h3>
+    <p style="font-size:14px;color:var(--text2);margin-bottom:6px">Seu pedido foi registrado com sucesso.</p>
+    <p style="font-size:13px;color:var(--text3);margin-bottom:32px">Em breve nossa equipe entrará em contato para confirmar os detalhes da instalação.</p>
+    <button class="btn" onclick="entrarStatus()" style="margin-bottom:10px"><i class="fas fa-search"></i>Acompanhar Pedido</button>
+    <button class="btn-ghost" onclick="voltarCpf()"><i class="fas fa-home"></i>Início</button>
+  </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════
+<!-- ══════════════════════════════════════════
      VIEW 5 — ADM LOGIN
-══════════════════════════════════════════════════════ -->
-<div id="view-adm-login" class="view min-h-screen items-center justify-center p-5">
-    <div class="w-full max-w-xs">
-        <div class="text-center mb-7">
-            <div class="inline-flex w-16 h-16 rounded-2xl bg-violet-900/50 border border-violet-500/30 items-center justify-center mb-3">
-                <i class="fas fa-shield-halved text-violet-400 text-2xl"></i>
-            </div>
-            <h2 class="font-black text-xl text-white">Painel Interno</h2>
-            <p class="text-xs text-slate-500 mt-1">Acesso exclusivo para colaboradores</p>
-        </div>
-
-        <!-- Carregando -->
-        <div id="adm-login-loading" class="text-center py-6">
-            <i class="fas fa-spinner fa-spin text-2xl text-violet-400 mb-3 block"></i>
-            <p class="text-xs text-slate-500">Verificando acesso...</p>
-        </div>
-
-        <!-- Primeiro acesso -->
-        <div id="adm-login-setup" class="hidden glass rounded-2xl p-5 space-y-3">
-            <p class="text-xs font-bold text-amber-400 uppercase tracking-wider"><i class="fas fa-star mr-1"></i>Primeiro Acesso — Criar Senha Master</p>
-            <p class="text-xs text-slate-500">Esta será a conta <strong class="text-amber-400">Super Admin permanente</strong>. O nome é fixo e não pode ser alterado.</p>
-            <!-- Nome fixo -->
-            <div class="w-full bg-slate-900 border border-amber-500/40 rounded-xl px-4 py-2.5 text-sm flex items-center justify-between">
-                <span class="font-black text-amber-300">admin</span>
-                <span class="text-[10px] text-slate-500 italic">nome fixo</span>
-            </div>
-            <div>
-                <label class="label">Senha *</label>
-                <input id="adm-setup-senha" type="password" placeholder="Mínimo 4 caracteres" class="inp"
-                    onkeydown="if(event.key==='Enter')document.getElementById('adm-setup-confirmar').focus()">
-            </div>
-            <div>
-                <label class="label">Confirmar Senha *</label>
-                <input id="adm-setup-confirmar" type="password" placeholder="Repita a senha" class="inp"
-                    onkeydown="if(event.key==='Enter')criarAdmMaster()">
-            </div>
-            <p id="adm-setup-erro" class="hidden text-rose-400 text-xs"><i class="fas fa-exclamation-circle mr-1"></i><span></span></p>
-            <button id="btn-adm-setup" onclick="criarAdmMaster()" class="btn-primary" style="background:linear-gradient(135deg,#d97706,#b45309)">
-                <i class="fas fa-key"></i>Criar e Entrar
-            </button>
-        </div>
-
-        <!-- Login normal -->
-        <div id="adm-login-normal" class="hidden glass rounded-2xl p-5 space-y-3">
-            <div>
-                <label class="label">Nome de Acesso</label>
-                <input id="adm-nome" type="text" placeholder="Seu nome" autocomplete="username"
-                    onkeydown="if(event.key==='Enter')document.getElementById('adm-senha').focus()"
-                    class="inp">
-            </div>
-            <div>
-                <label class="label">Senha</label>
-                <div class="relative">
-                    <input id="adm-senha" type="password" placeholder="••••••••" autocomplete="current-password"
-                        onkeydown="if(event.key==='Enter')loginAdm()"
-                        class="inp pr-10">
-                    <button type="button" onclick="toggleSenhaVis(this)"
-                        class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition">
-                        <i class="fas fa-eye text-sm"></i>
-                    </button>
-                </div>
-            </div>
-            <label class="flex items-start gap-2 cursor-pointer select-none">
-                <input type="checkbox" id="adm-salvar-check" class="mt-0.5 accent-violet-500 flex-shrink-0">
-                <span class="text-xs text-slate-400">Salvar acesso <span class="text-slate-600">— não recomendado em dispositivos públicos</span></span>
-            </label>
-            <p id="adm-login-erro" class="hidden text-rose-400 text-xs text-center"><i class="fas fa-exclamation-circle mr-1"></i><span></span></p>
-            <button id="btn-adm-login" onclick="loginAdm()" class="btn-primary">
-                <i class="fas fa-sign-in-alt"></i>Entrar
-            </button>
-        </div>
-
-        <div class="text-center mt-4">
-            <button onclick="voltarDaAdm()" class="text-xs text-slate-600 hover:text-slate-400 transition">
-                <i class="fas fa-arrow-left mr-1"></i>Voltar ao início
-            </button>
-        </div>
+══════════════════════════════════════════ -->
+<div id="view-adm-login" class="view" style="min-height:100dvh;align-items:center;justify-content:center;padding:20px">
+  <div style="width:100%;max-width:360px">
+    <div style="text-align:center;margin-bottom:28px">
+      <div style="width:60px;height:60px;border-radius:16px;background:rgba(37,99,235,.15);border:1px solid rgba(37,99,235,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
+        <i class="fas fa-shield-halved" style="font-size:24px;color:var(--blue-l)"></i>
+      </div>
+      <h2 style="font-size:22px;font-weight:900;color:#fff">Acesso Interno</h2>
+      <p style="font-size:13px;color:var(--text3);margin-top:4px">Exclusivo para colaboradores Audicom</p>
     </div>
+
+    <div id="adm-login-loading" class="card" style="padding:32px;text-align:center">
+      <i class="fas fa-spinner fa-spin" style="font-size:24px;color:var(--blue-l);margin-bottom:10px;display:block"></i>
+      <p style="font-size:13px;color:var(--text2)">Verificando...</p>
+    </div>
+
+    <div id="adm-login-setup" class="card hidden" style="padding:24px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;padding:10px 14px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:10px">
+        <i class="fas fa-star" style="color:#fbbf24"></i>
+        <div>
+          <p style="font-size:12px;font-weight:700;color:#fbbf24">Primeiro acesso — Criar senha master</p>
+          <p style="font-size:11px;color:var(--text3);margin-top:1px">Esta conta não pode ser removida</p>
+        </div>
+      </div>
+      <div style="background:rgba(4,10,28,.8);border:1px solid rgba(245,158,11,.25);border-radius:10px;padding:10px 14px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:14px;font-weight:800;color:#fbbf24">admin</span>
+        <span style="font-size:10px;color:var(--text3);font-style:italic">nome fixo</span>
+      </div>
+      <div style="margin-bottom:12px"><label class="lbl">Senha *</label><input id="adm-setup-senha" class="inp" type="password" placeholder="Mínimo 4 caracteres" onkeydown="if(event.key==='Enter')document.getElementById('adm-setup-conf').focus()"></div>
+      <div style="margin-bottom:16px"><label class="lbl">Confirmar Senha *</label><input id="adm-setup-conf" class="inp" type="password" placeholder="Repita a senha" onkeydown="if(event.key==='Enter')criarAdmMaster()"></div>
+      <p id="adm-setup-erro" class="hidden" style="color:#f87171;font-size:12px;margin-bottom:12px;text-align:center"><i class="fas fa-exclamation-circle" style="margin-right:4px"></i><span></span></p>
+      <button id="btn-adm-setup" class="btn" onclick="criarAdmMaster()" style="background:linear-gradient(135deg,#d97706,#b45309)"><i class="fas fa-key"></i>Criar e Entrar</button>
+    </div>
+
+    <div id="adm-login-normal" class="card hidden" style="padding:24px">
+      <div style="margin-bottom:12px"><label class="lbl">Nome de Acesso</label><input id="adm-nome" class="inp" type="text" placeholder="Seu nome" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('adm-senha').focus()"></div>
+      <div style="margin-bottom:6px">
+        <label class="lbl">Senha</label>
+        <div style="position:relative">
+          <input id="adm-senha" class="inp" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')loginAdm()" style="padding-right:42px">
+          <button type="button" onclick="toggleSenha(this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);cursor:pointer;padding:0">
+            <i class="fas fa-eye" style="font-size:13px"></i>
+          </button>
+        </div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:16px;user-select:none">
+        <input type="checkbox" id="adm-salvar-check" style="accent-color:var(--blue)">
+        <span style="font-size:12px;color:var(--text2)">Manter acesso neste dispositivo</span>
+      </label>
+      <p id="adm-login-erro" class="hidden" style="color:#f87171;font-size:12px;margin-bottom:12px;text-align:center"><i class="fas fa-exclamation-circle" style="margin-right:4px"></i><span></span></p>
+      <button id="btn-adm-login" class="btn" onclick="loginAdm()"><i class="fas fa-sign-in-alt"></i>Entrar</button>
+    </div>
+
+    <div style="text-align:center;margin-top:20px">
+      <button onclick="voltarDaAdm()" style="font-size:12px;color:var(--text3);background:none;border:none;cursor:pointer;font-family:'Inter',sans-serif"><i class="fas fa-arrow-left" style="margin-right:4px"></i>Voltar</button>
+    </div>
+  </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════
-     VIEW 6 — ADM PAINEL
-══════════════════════════════════════════════════════ -->
-<div id="view-adm" class="view min-h-screen">
+<!-- ══════════════════════════════════════════
+     VIEW 6 — PAINEL ADM
+══════════════════════════════════════════ -->
+<div id="view-adm" class="view">
 
-    <!-- Header -->
-    <header class="sticky top-0 z-40 glass border-b border-violet-500/10 px-4 py-3 flex items-center gap-3">
-        <div class="w-9 h-9 rounded-2xl flex items-center justify-center flex-shrink-0 font-black text-sm text-white" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)" id="adm-avatar">A</div>
-        <div class="flex-1 min-w-0">
-            <p class="font-black text-sm text-white leading-tight truncate" id="adm-user-nome">—</p>
-            <p class="text-[10px] text-violet-400/70 font-semibold" id="adm-user-role">Usuário</p>
+  <!-- SIDEBAR (desktop) -->
+  <aside id="adm-sidebar">
+    <div class="sidebar-logo">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#2563eb,#1d4ed8);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <i class="fas fa-wifi" style="color:#fff;font-size:14px"></i>
         </div>
-        <button onclick="sairAdm()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-rose-900/40 border border-slate-700/60 hover:border-rose-700/40 text-slate-400 hover:text-rose-400 transition text-xs font-bold">
-            <i class="fas fa-power-off text-[11px]"></i>Sair
-        </button>
+        <div>
+          <p style="font-size:15px;font-weight:900;color:#fff">Audicom</p>
+          <p style="font-size:10px;color:var(--text3)">Painel ADM</p>
+        </div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" id="nav-pedidos" onclick="setAdmTab('pedidos')">
+        <i class="fas fa-clipboard-list"></i><span>Pedidos</span>
+      </div>
+      <div class="nav-item" id="nav-usuarios" onclick="setAdmTab('usuarios')">
+        <i class="fas fa-users"></i><span>Usuários</span>
+        <span id="nav-usuarios-badge" class="hidden" style="margin-left:auto;font-size:10px;font-weight:700;background:var(--blue-dd);color:#fff;padding:1px 7px;border-radius:999px"></span>
+      </div>
+    </nav>
+    <div class="sidebar-user">
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 4px;margin-bottom:8px">
+        <div id="sidebar-avatar" style="width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#2563eb,#1d4ed8);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#fff;flex-shrink:0">A</div>
+        <div style="flex:1;min-width:0">
+          <p id="sidebar-nome" style="font-size:13px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">—</p>
+          <p id="sidebar-role" style="font-size:10px;color:var(--text3)">Usuário</p>
+        </div>
+      </div>
+      <div class="sidebar-logout" onclick="sairAdm()">
+        <i class="fas fa-power-off" style="font-size:12px"></i>Sair
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div id="adm-main">
+
+    <!-- Mobile header -->
+    <header id="adm-mobile-header">
+      <div style="width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#2563eb,#1d4ed8);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <i class="fas fa-wifi" style="color:#fff;font-size:12px"></i>
+      </div>
+      <p id="adm-mobile-title" style="flex:1;font-size:14px;font-weight:800;color:#fff">Pedidos</p>
+      <div id="mobile-avatar" style="width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#2563eb,#1d4ed8);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#fff;cursor:pointer" onclick="sairAdm()">A</div>
     </header>
 
-    <div class="flex-1 overflow-y-auto">
-
-        <!-- Stats — scroll horizontal -->
-        <div class="px-4 pt-4 pb-3 flex gap-2 overflow-x-auto scrollbar-none">
-            <div class="flex-shrink-0 bg-slate-800/70 border border-slate-700/60 rounded-2xl px-5 py-3 text-center min-w-[76px]">
-                <p class="text-2xl font-black text-white leading-none" id="badge-todos">0</p>
-                <p class="text-[9px] text-slate-500 uppercase font-bold mt-1">Total</p>
-            </div>
-            <div class="flex-shrink-0 rounded-2xl px-5 py-3 text-center min-w-[76px]" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2)">
-                <p class="text-2xl font-black text-amber-400 leading-none" id="badge-pendente">0</p>
-                <p class="text-[9px] text-amber-600 uppercase font-bold mt-1">Pendentes</p>
-            </div>
-            <div class="flex-shrink-0 rounded-2xl px-5 py-3 text-center min-w-[76px]" style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2)">
-                <p class="text-2xl font-black text-emerald-400 leading-none" id="badge-aceito">0</p>
-                <p class="text-[9px] text-emerald-600 uppercase font-bold mt-1">Aceitos</p>
-            </div>
-            <div class="flex-shrink-0 rounded-2xl px-5 py-3 text-center min-w-[76px]" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2)">
-                <p class="text-2xl font-black text-rose-400 leading-none" id="badge-recusado">0</p>
-                <p class="text-[9px] text-rose-600 uppercase font-bold mt-1">Recusados</p>
-            </div>
-            <div class="flex-shrink-0 rounded-2xl px-5 py-3 text-center min-w-[76px]" style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2)">
-                <p class="text-2xl font-black text-blue-400 leading-none" id="badge-reaberto">0</p>
-                <p class="text-[9px] text-blue-600 uppercase font-bold mt-1">Reabertos</p>
-            </div>
-            <div class="flex-shrink-0 rounded-2xl px-5 py-3 text-center min-w-[76px]" style="background:rgba(100,116,139,0.08);border:1px solid rgba(100,116,139,0.2)">
-                <p class="text-2xl font-black text-slate-400 leading-none" id="badge-fechado">0</p>
-                <p class="text-[9px] text-slate-500 uppercase font-bold mt-1">Fechados</p>
-            </div>
+    <!-- Desktop topbar -->
+    <div id="adm-topbar">
+      <p id="adm-topbar-title" style="font-size:16px;font-weight:800;color:#fff;flex:1">Pedidos</p>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div id="topbar-avatar" style="width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#2563eb,#1d4ed8);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#fff">A</div>
+        <div>
+          <p id="topbar-nome" style="font-size:13px;font-weight:700;color:#fff;line-height:1.2">—</p>
+          <p id="topbar-role" style="font-size:10px;color:var(--text3)">Usuário</p>
         </div>
-
-        <!-- Filtros -->
-        <div class="px-4 pb-2 flex gap-1.5 overflow-x-auto scrollbar-none">
-            <button id="fadm-todos"    onclick="setFiltroAdm('todos')"    class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap border bg-violet-700 text-white border-violet-600">Todos</button>
-            <button id="fadm-pendente" onclick="setFiltroAdm('pendente')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap border bg-slate-800/80 text-slate-400 border-slate-700/80">Pendentes</button>
-            <button id="fadm-aceito"   onclick="setFiltroAdm('aceito')"   class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap border bg-slate-800/80 text-slate-400 border-slate-700/80">Aceitos</button>
-            <button id="fadm-recusado" onclick="setFiltroAdm('recusado')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap border bg-slate-800/80 text-slate-400 border-slate-700/80">Recusados</button>
-            <button id="fadm-reaberto" onclick="setFiltroAdm('reaberto')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap border bg-slate-800/80 text-slate-400 border-slate-700/80">Reabertos</button>
-            <button id="fadm-fechado"  onclick="setFiltroAdm('fechado')"  class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap border bg-slate-800/80 text-slate-400 border-slate-700/80">Fechados</button>
-        </div>
-
-        <!-- Busca -->
-        <div class="px-4 pb-3">
-            <div class="relative">
-                <i class="fas fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs pointer-events-none"></i>
-                <input type="text" id="adm-busca" placeholder="Buscar nome, CPF, plano, e-mail..." oninput="renderListaAdm()"
-                    class="inp pl-9 text-sm">
-            </div>
-        </div>
-
-        <!-- Lista -->
-        <div id="adm-lista" class="px-4 pb-4 space-y-2.5"></div>
-
-        <!-- Gestão de usuários (só master) -->
-        <div id="adm-usuarios-section" class="hidden px-4 pb-10 mt-1">
-            <div class="rounded-2xl overflow-hidden" style="background:rgba(30,20,60,0.55);border:1px solid rgba(139,92,246,0.15)">
-                <div class="px-4 py-4 border-b border-violet-500/10 flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-xl bg-violet-600/20 border border-violet-500/20 flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-users text-violet-400 text-xs"></i>
-                    </div>
-                    <div class="flex-1">
-                        <h3 class="font-black text-sm text-white">Usuários do Painel</h3>
-                        <p class="text-[10px] text-slate-500">Gerencie os acessos ao ADM</p>
-                    </div>
-                </div>
-                <div class="p-4 space-y-2">
-                    <div id="adm-usuarios-lista" class="space-y-2 mb-3"></div>
-                    <button id="btn-novo-usuario" onclick="abrirFormNovoUsuario()"
-                        class="w-full border border-dashed border-violet-500/30 hover:border-violet-400/60 text-violet-400 text-xs font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition hover:bg-violet-500/10">
-                        <i class="fas fa-user-plus text-[11px]"></i>Adicionar Usuário
-                    </button>
-                    <div id="form-novo-usuario" class="hidden pt-3 border-t border-slate-700/60 space-y-2.5">
-                        <input type="text"     id="nu-nome"      placeholder="Nome *"           class="inp text-sm">
-                        <input type="password" id="nu-senha"     placeholder="Senha *"          class="inp text-sm">
-                        <input type="password" id="nu-confirmar" placeholder="Confirmar senha *" class="inp text-sm"
-                            onkeydown="if(event.key==='Enter')criarNovoUsuario()">
-                        <p id="nu-erro" class="hidden text-rose-400 text-xs"><i class="fas fa-exclamation-circle mr-1"></i><span></span></p>
-                        <div class="flex gap-2 pt-1">
-                            <button onclick="fecharFormNovoUsuario()" class="flex-1 py-2.5 rounded-xl bg-slate-700 hover:bg-slate-600 text-sm font-bold transition">Cancelar</button>
-                            <button onclick="criarNovoUsuario()"      class="flex-1 py-2.5 rounded-xl bg-violet-700 hover:bg-violet-600 text-white text-sm font-bold transition">Salvar</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+      </div>
     </div>
-</div>
 
-<!-- Modal detalhe pedido ADM -->
-<div id="modal-pedido" class="fixed inset-0 z-[80] hidden items-center justify-center p-4"
-     style="background:rgba(0,0,0,0.78);backdrop-filter:blur(6px)"
-     onclick="if(event.target===this)fecharPedidoModal()">
-    <div class="pm-card">
+    <!-- Tab content area -->
+    <div id="adm-tab-content">
 
-        <!-- Header -->
-        <div class="pm-header">
-            <div id="modal-ped-icon" class="pm-header-icon">
-                <i class="fas fa-file-alt"></i>
-            </div>
-            <div class="pm-header-info">
-                <p class="pm-header-nome" id="modal-ped-nome">—</p>
-                <div class="pm-header-sub">
-                    <span id="modal-ped-badge" class="pm-badge"></span>
-                    <span class="pm-header-cpf" id="modal-ped-cpf"></span>
-                </div>
-            </div>
-            <button onclick="mostrarEditarPedido()" id="btn-edit-pedido" class="pm-close-btn" style="display:none;" title="Editar Pedido">
-                <i class="fas fa-pen"></i>
-            </button>
-            <button onclick="fecharPedidoModal()" class="pm-close-btn">
-                <i class="fas fa-xmark"></i>
-            </button>
+      <!-- ── TAB: PEDIDOS ── -->
+      <div id="adm-tab-pedidos">
+        <!-- Stats -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <p class="stat-number" id="stat-total" style="color:#fff">0</p>
+            <p class="stat-label">Total</p>
+          </div>
+          <div class="stat-card" style="border-color:rgba(245,158,11,.2)">
+            <p class="stat-number" id="stat-pendente" style="color:#fbbf24">0</p>
+            <p class="stat-label">Pendentes</p>
+          </div>
+          <div class="stat-card" style="border-color:rgba(16,185,129,.2)">
+            <p class="stat-number" id="stat-aceito" style="color:#34d399">0</p>
+            <p class="stat-label">Aceitos</p>
+          </div>
+          <div class="stat-card" style="border-color:rgba(239,68,68,.2)">
+            <p class="stat-number" id="stat-recusado" style="color:#f87171">0</p>
+            <p class="stat-label">Recusados</p>
+          </div>
+          <div class="stat-card" style="border-color:rgba(59,130,246,.2)">
+            <p class="stat-number" id="stat-reaberto" style="color:#60a5fa">0</p>
+            <p class="stat-label">Reabertos</p>
+          </div>
+          <div class="stat-card" style="border-color:rgba(100,116,139,.2)">
+            <p class="stat-number" id="stat-fechado" style="color:#94a3b8">0</p>
+            <p class="stat-label">Fechados</p>
+          </div>
         </div>
 
-        <div id="modal-ped-body" class="pm-body"></div>
-    </div>
-</div>
+        <!-- Filter chips -->
+        <div class="chip-row">
+          <span class="chip active" id="chip-todos" onclick="setFiltro('todos')">Todos</span>
+          <span class="chip" id="chip-pendente" onclick="setFiltro('pendente')"><i class="fas fa-clock"></i>Pendentes</span>
+          <span class="chip" id="chip-aceito" onclick="setFiltro('aceito')"><i class="fas fa-check-circle"></i>Aceitos</span>
+          <span class="chip" id="chip-recusado" onclick="setFiltro('recusado')"><i class="fas fa-times-circle"></i>Recusados</span>
+          <span class="chip" id="chip-reaberto" onclick="setFiltro('reaberto')"><i class="fas fa-rotate-left"></i>Reabertos</span>
+          <span class="chip" id="chip-fechado" onclick="setFiltro('fechado')"><i class="fas fa-lock"></i>Fechados</span>
+        </div>
 
-<!-- Toast -->
-<div id="toast" class="fixed bottom-6 left-1/2 z-[999] px-5 py-2.5 rounded-full text-sm font-bold shadow-xl"></div>
+        <!-- Search -->
+        <div style="position:relative;margin-bottom:16px">
+          <i class="fas fa-magnifying-glass" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:13px;pointer-events:none"></i>
+          <input class="inp" type="text" id="adm-busca" placeholder="Buscar nome, CPF, plano..." oninput="renderLista()" style="padding-left:38px">
+        </div>
+
+        <!-- List -->
+        <div id="adm-lista"></div>
+      </div>
+
+      <!-- ── TAB: USUÁRIOS ── -->
+      <div id="adm-tab-usuarios" class="hidden">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
+          <div>
+            <h2 style="font-size:18px;font-weight:900;color:#fff">Gestão de Usuários</h2>
+            <p style="font-size:13px;color:var(--text2);margin-top:2px">Gerencie os acessos ao painel ADM</p>
+          </div>
+          <button class="btn-sm" onclick="toggleAddUserForm()" id="btn-add-user">
+            <i class="fas fa-user-plus"></i>Novo Usuário
+          </button>
+        </div>
+
+        <!-- Add user form -->
+        <div id="add-user-form-wrap" class="hidden" style="margin-bottom:20px">
+          <h3 style="font-size:14px;font-weight:700;color:var(--blue-l);margin-bottom:16px;display:flex;align-items:center;gap:8px">
+            <i class="fas fa-user-plus"></i>Adicionar Usuário
+          </h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+            <div><label class="lbl">Nome *</label><input id="nu-nome" class="inp" type="text" placeholder="Nome de acesso"></div>
+            <div><label class="lbl">Senha *</label><input id="nu-senha" class="inp" type="password" placeholder="Min. 4 caracteres"></div>
+            <div><label class="lbl">Confirmar *</label><input id="nu-conf" class="inp" type="password" placeholder="Repita a senha" onkeydown="if(event.key==='Enter')criarNovoUsuario()"></div>
+          </div>
+          <p id="nu-erro" class="hidden" style="color:#f87171;font-size:12px;margin-bottom:10px"><i class="fas fa-exclamation-circle" style="margin-right:4px"></i><span></span></p>
+          <div style="display:flex;gap:8px">
+            <button onclick="cancelarAddUser()" style="padding:9px 20px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif">Cancelar</button>
+            <button onclick="criarNovoUsuario()" class="btn-sm" style="padding:9px 20px"><i class="fas fa-save"></i>Salvar</button>
+          </div>
+        </div>
+
+        <div id="users-grid" class="users-grid"></div>
+      </div>
+
+    </div><!-- /adm-tab-content -->
+
+    <!-- Mobile bottom nav -->
+    <nav id="adm-bottom-nav">
+      <div class="bnav-items">
+        <div class="bnav-item active" id="bnav-pedidos" onclick="setAdmTab('pedidos')">
+          <i class="fas fa-clipboard-list"></i>Pedidos
+        </div>
+        <div class="bnav-item" id="bnav-usuarios" onclick="setAdmTab('usuarios')">
+          <i class="fas fa-users"></i>Usuários
+        </div>
+        <div class="bnav-item" onclick="sairAdm()">
+          <i class="fas fa-power-off"></i>Sair
+        </div>
+      </div>
+    </nav>
+
+  </div><!-- /adm-main -->
+</div><!-- /view-adm -->
+
+<!-- ══════════════════════════════════════════
+     PANEL: DETALHE DO PEDIDO
+══════════════════════════════════════════ -->
+<div id="panel-pedido">
+  <div class="panel-backdrop" onclick="fecharPanel()"></div>
+  <div class="panel-card">
+    <div class="panel-header">
+      <div id="panel-icon" style="width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">
+        <i class="fas fa-file-alt"></i>
+      </div>
+      <div style="flex:1;min-width:0">
+        <p id="panel-nome" style="font-size:16px;font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">—</p>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+          <span id="panel-badge" class="badge"></span>
+          <span id="panel-cpf" style="font-size:11px;color:var(--text3);font-family:monospace"></span>
+        </div>
+      </div>
+      <button id="btn-panel-edit" onclick="ativarEdicao()" style="display:none;width:34px;height:34px;border-radius:9px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:var(--blue-l);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s" onmouseover="this.style.background='rgba(59,130,246,.2)'" onmouseout="this.style.background='rgba(59,130,246,.1)'"><i class="fas fa-pen"></i></button>
+      <button onclick="fecharPanel()" style="width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text2);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0" onmouseover="this.style.background='rgba(255,255,255,.1)'" onmouseout="this.style.background='rgba(255,255,255,.05)'"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div id="panel-body" class="panel-body"></div>
+  </div>
+</div>
 
 <!-- Scripts -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -776,25 +1079,13 @@ body{
 <script src="firebase.js"></script>
 <script src="app.js"></script>
 <script>
-// helpers inline pequenos
-function toggleSenhaVis(btn) {
-    const inp = btn.previousElementSibling;
-    const show = inp.type === 'password';
-    inp.type = show ? 'text' : 'password';
-    btn.querySelector('i').className = show ? 'fas fa-eye-slash text-sm' : 'fas fa-eye text-sm';
+function toggleSenha(btn) {
+  const inp = btn.previousElementSibling;
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  btn.querySelector('i').className = show ? 'fas fa-eye-slash' : 'fas fa-eye';
+  btn.querySelector('i').style.fontSize = '13px';
 }
-
-// atualiza label do CPF no form
-document.getElementById('inp-cpf')?.addEventListener('input', () => {
-    const v = document.getElementById('inp-cpf').value;
-    const lbl = document.getElementById('form-cpf-label');
-    if (lbl && v) lbl.textContent = v;
-});
-
-// exibe mensagens de erro inline
-document.getElementById('cpf-erro').addEventListener('DOMSubtreeModified', function() {
-    // noop — texto já é setado em JS
-});
 </script>
 </body>
 </html>
