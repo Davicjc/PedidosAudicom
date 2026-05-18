@@ -5,8 +5,29 @@
 // ── FIREBASE ──────────────────────────────────────────
 let db, colPedidos, colAdm, auth;
 
-// Promise que resolve quando auth + token Firestore estão prontos
-let _authReady;
+// Garante que há um usuário autenticado (admin salvo OU anônimo).
+// Verifica sessão existente ANTES de tentar login anônimo —
+// evita sobrescrever sessões de atendentes com persistência LOCAL.
+function _garantirAuth() {
+  return new Promise((resolve, reject) => {
+    const unsub = auth.onAuthStateChanged(async user => {
+      unsub();
+      if (user) {
+        // Já autenticado (admin com sessão salva ou anônimo anterior)
+        resolve(user);
+      } else {
+        // Sem sessão — entra anonimamente
+        try {
+          const cred = await auth.signInAnonymously();
+          await cred.user.getIdToken(); // garante token propagado ao Firestore
+          resolve(cred.user);
+        } catch (e) {
+          reject(e);
+        }
+      }
+    });
+  });
+}
 
 window.addEventListener('load', () => {
   initSignatures();
@@ -15,20 +36,14 @@ window.addEventListener('load', () => {
   _capturarIP();
 
   try {
-    auth = firebase.auth();
-    db   = firebase.firestore();
+    auth       = firebase.auth();
+    db         = firebase.firestore();
+    colPedidos = db.collection('pedidos');
+    colAdm     = db.collection('usuarios_adm');
 
-    // signInAnonymously resolve com UserCredential quando o token está pronto.
-    // getIdToken() força o token a ser buscado/cacheado antes de qualquer query
-    // ao Firestore — evita race condition em produção.
-    _authReady = auth.signInAnonymously()
-      .then(cred => cred.user.getIdToken())
-      .then(() => {
-        colPedidos = db.collection('pedidos');
-        colAdm     = db.collection('usuarios_adm');
-      });
-
-    _authReady.catch(e => {
+    // Autentica no carregamento. Se admin tiver sessão salva, usa ela;
+    // caso contrário entra anonimamente.
+    _garantirAuth().catch(e => {
       console.error('Firebase auth:', e);
       toast('Erro ao conectar. Verifique sua conexão.', 'err');
     });
@@ -215,6 +230,8 @@ async function confirmarEnvioFinal() {
   };
 
   try {
+    // Re-garante auth caso o usuário anônimo tenha sido deslogado
+    await _garantirAuth();
     data.criadoEm    = firebase.firestore.FieldValue.serverTimestamp();
     data.criadoEmStr = new Date().toLocaleString('pt-BR');
     await colPedidos.add(data);
@@ -646,8 +663,9 @@ function renderWizardResumo() {
 // ── STATUS (CLIENT) ───────────────────────────────────
 async function carregarStatusCliente() {
   try {
-    // Aguarda a autenticação anônima antes de consultar o Firestore
-    if (_authReady) await _authReady;
+    // _garantirAuth() verifica sessão existente e re-autentica
+    // anonimamente se necessário (ex: após signOut do painel admin)
+    await _garantirAuth();
     if (!colPedidos) { toast('Sem conexão.', 'err'); showView('view-cpf'); return; }
     const snap = await colPedidos.where('cpf', '==', st.cpf).get();
     if (snap.empty) { showView('view-status-vazio'); return; }
