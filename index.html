@@ -533,6 +533,34 @@ textarea.inp { resize: none; }
 .modal-body { overflow-y: auto; padding: 16px 20px 28px; flex: 1; }
 .ev-row { display: flex; align-items: center; gap: 9px; font-size: 12px; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,.04); }
 .ev-row:last-child { border-bottom: none; }
+
+/* ── FIELD ROLE BADGES ──────────────────── */
+.field-role {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 999px;
+  line-height: 1;
+  vertical-align: middle;
+  margin-left: 6px;
+  white-space: nowrap;
+}
+.field-role.tecnico {
+  background: rgba(59,130,246,.15);
+  border: 1px solid rgba(59,130,246,.3);
+  color: #93c5fd;
+}
+.field-role.cliente {
+  background: rgba(16,185,129,.13);
+  border: 1px solid rgba(16,185,129,.3);
+  color: #6ee7b7;
+}
+.lbl { display: flex; align-items: center; flex-wrap: wrap; gap: 2px; }
 </style>
 </head>
 <body>
@@ -609,8 +637,8 @@ textarea.inp { resize: none; }
       </div>
       <div class="wizard-form-card">
         <div class="grid-2">
-          <div><label class="lbl">Data de Emissão</label><input id="form-data" class="inp" type="text" placeholder="DD/MM/AAAA"></div>
-          <div><label class="lbl">A.C.</label><input id="form-ac" class="inp" type="text" placeholder="AC-001"></div>
+          <div><label class="lbl">Data de Emissão<span class="field-role tecnico"><i class="fas fa-screwdriver-wrench" style="font-size:8px"></i>Técnico</span></label><input id="form-data" class="inp" type="text" placeholder="DD/MM/AAAA"></div>
+          <div><label class="lbl">A.C.<span class="field-role tecnico"><i class="fas fa-screwdriver-wrench" style="font-size:8px"></i>Técnico</span></label><input id="form-ac" class="inp" type="text" placeholder="AC-001"></div>
         </div>
       </div>
     </div>
@@ -622,16 +650,16 @@ textarea.inp { resize: none; }
         <div><p class="step-lbl">Dados do Cliente</p><p class="step-sub">Titular do contrato</p></div>
       </div>
       <div class="wizard-form-card">
-        <div><label class="lbl">Nome / Razão Social *</label><input id="form-nome" class="inp" type="text" placeholder="Nome completo" autocomplete="name"></div>
+        <div><label class="lbl">Nome / Razão Social *<span class="field-role cliente"><i class="fas fa-user" style="font-size:8px"></i>Cliente</span></label><input id="form-nome" class="inp" type="text" placeholder="Nome completo" autocomplete="name"></div>
         <div class="grid-2">
-          <div><label class="lbl">CPF / CNPJ *</label><input id="form-cpf" class="inp" type="text" inputmode="numeric" maxlength="18" oninput="onDocInput(this)" style="font-family:monospace"></div>
-          <div><label class="lbl">RG / I.E.</label><input id="form-rg" class="inp" type="text" placeholder="RG ou I.E."></div>
+          <div><label class="lbl">CPF / CNPJ *<span class="field-role cliente"><i class="fas fa-user" style="font-size:8px"></i>Cliente</span></label><input id="form-cpf" class="inp" type="text" inputmode="numeric" maxlength="18" oninput="onDocInput(this)" style="font-family:monospace"></div>
+          <div><label class="lbl">RG / I.E.<span class="field-role cliente"><i class="fas fa-user" style="font-size:8px"></i>Cliente</span></label><input id="form-rg" class="inp" type="text" placeholder="RG ou I.E."></div>
         </div>
         <div class="grid-2">
-          <div><label class="lbl">Celular *</label><input id="form-cel" class="inp" type="tel" inputmode="numeric" placeholder="(00) 00000-0000" maxlength="15" oninput="onPhoneInput(this)"></div>
-          <div><label class="lbl">Celular Alt.</label><input id="form-cel2" class="inp" type="tel" inputmode="numeric" placeholder="(00) 00000-0000" maxlength="15" oninput="onPhoneInput(this)"></div>
+          <div><label class="lbl">Celular *<span class="field-role cliente"><i class="fas fa-user" style="font-size:8px"></i>Cliente</span></label><input id="form-cel" class="inp" type="tel" inputmode="numeric" placeholder="(00) 00000-0000" maxlength="15" oninput="onPhoneInput(this)"></div>
+          <div><label class="lbl">Celular Alt.<span class="field-role cliente"><i class="fas fa-user" style="font-size:8px"></i>Cliente</span></label><input id="form-cel2" class="inp" type="tel" inputmode="numeric" placeholder="(00) 00000-0000" maxlength="15" oninput="onPhoneInput(this)"></div>
         </div>
-        <div><label class="lbl">E-mail</label><input id="form-email" class="inp" type="email" placeholder="email@exemplo.com" autocomplete="email"></div>
+        <div><label class="lbl">E-mail<span class="field-role cliente"><i class="fas fa-user" style="font-size:8px"></i>Cliente</span></label><input id="form-email" class="inp" type="email" placeholder="email@exemplo.com" autocomplete="email"></div>
       </div>
     </div>
 
@@ -645,7 +673,7 @@ textarea.inp { resize: none; }
         <p style="font-size:11px;font-weight:700;color:var(--blue-l);text-transform:uppercase;letter-spacing:.06em"><i class="fas fa-map-pin" style="margin-right:5px"></i>Instalação</p>
         <div class="grid-3">
           <div>
-            <label class="lbl">CEP</label>
+            <label class="lbl">CEP<span class="field-role cliente"><i class="fas fa-user" style="font-size:8px"></i>Cliente</span></label>
             <div style="position:relative">
               <input id="inst-cep" class="inp" type="text" inputmode="numeric" maxlength="9" placeholder="00000-000" oninput="onCepInput(this,'inst')" style="padding-right:36px">
               <i id="inst-cep-spin" class="fas fa-spinner fa-spin hidden" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--blue-l);font-size:12px"></i>
@@ -653,22 +681,22 @@ textarea.inp { resize: none; }
             <p id="inst-cep-erro" class="hidden" style="color:#f87171;font-size:11px;margin-top:4px"></p>
           </div>
           <div>
-            <label class="lbl">UF</label>
+            <label class="lbl">UF<span class="field-role cliente"><i class="fas fa-user" style="font-size:8px"></i>Cliente</span></label>
             <select id="inst-uf" class="inp">
               <option value="">—</option>
               <option>AC</option><option>AL</option><option>AM</option><option>AP</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MG</option><option>MS</option><option>MT</option><option>PA</option><option>PB</option><option>PE</option><option>PI</option><option>PR</option><option>RJ</option><option>RN</option><option>RO</option><option>RR</option><option>RS</option><option>SC</option><option>SE</option><option>SP</option><option>TO</option>
             </select>
           </div>
         </div>
-        <div><label class="lbl">Endereço *</label><input id="inst-end" class="inp" type="text" placeholder="Rua, Av., Travessa..."></div>
+        <div><label class="lbl">Endereço *<span class="field-role cliente"><i class="fas fa-user" style="font-size:8px"></i>Cliente</span></label><input id="inst-end" class="inp" type="text" placeholder="Rua, Av., Travessa..."></div>
         <div class="grid-2">
-          <div><label class="lbl">Número *</label><input id="inst-num" class="inp" type="text" placeholder="Nº"></div>
-          <div><label class="lbl">Bairro</label><input id="inst-bairro" class="inp" type="text" placeholder="Bairro"></div>
+          <div><label class="lbl">Número *<span class="field-role cliente"><i class="fas fa-user" style="font-size:8px"></i>Cliente</span></label><input id="inst-num" class="inp" type="text" placeholder="Nº"></div>
+          <div><label class="lbl">Bairro<span class="field-role cliente"><i class="fas fa-user" style="font-size:8px"></i>Cliente</span></label><input id="inst-bairro" class="inp" type="text" placeholder="Bairro"></div>
         </div>
-        <div><label class="lbl">Cidade *</label><input id="inst-cidade" class="inp" type="text" placeholder="Cidade"></div>
-        <div><label class="lbl">Complemento</label><input id="inst-comp" class="inp" type="text" placeholder="Apto, bloco, referência..."></div>
+        <div><label class="lbl">Cidade *<span class="field-role cliente"><i class="fas fa-user" style="font-size:8px"></i>Cliente</span></label><input id="inst-cidade" class="inp" type="text" placeholder="Cidade"></div>
+        <div><label class="lbl">Complemento<span class="field-role cliente"><i class="fas fa-user" style="font-size:8px"></i>Cliente</span></label><input id="inst-comp" class="inp" type="text" placeholder="Apto, bloco, referência..."></div>
         <div>
-          <label class="lbl"><i class="fas fa-map-pin" style="color:var(--blue-l);margin-right:4px"></i>GPS</label>
+          <label class="lbl"><i class="fas fa-map-pin" style="color:var(--blue-l);margin-right:4px"></i>GPS<span class="field-role tecnico"><i class="fas fa-screwdriver-wrench" style="font-size:8px"></i>Técnico</span></label>
           <div style="display:flex;gap:8px">
             <input id="inst-coords" class="inp" type="text" placeholder="-00.000000, -00.000000" style="font-family:monospace;font-size:12px">
             <button id="inst-gps-btn" onclick="pegarLocalizacao('inst')" title="Usar GPS"
@@ -728,34 +756,34 @@ textarea.inp { resize: none; }
       <div class="wizard-form-card">
         <div class="grid-2">
           <div>
-            <label class="lbl">Plano</label>
+            <label class="lbl">Plano<span class="field-role tecnico"><i class="fas fa-screwdriver-wrench" style="font-size:8px"></i>Técnico</span></label>
             <input id="sv-plano" class="inp" type="text" placeholder="Fibra 500MB" list="lista-planos">
             <datalist id="lista-planos"><option value="Fibra 100MB"><option value="Fibra 200MB"><option value="Fibra 500MB"><option value="Fibra 1GB"><option value="Rádio 10MB"><option value="Rádio 20MB"></datalist>
           </div>
           <div>
-            <label class="lbl">Pacote</label>
+            <label class="lbl">Pacote<span class="field-role tecnico"><i class="fas fa-screwdriver-wrench" style="font-size:8px"></i>Técnico</span></label>
             <input id="sv-pacote" class="inp" type="text" placeholder="Residencial" list="lista-pacotes">
             <datalist id="lista-pacotes"><option value="Residencial"><option value="Empresarial"><option value="Plus"><option value="Premium"></datalist>
           </div>
         </div>
         <div class="grid-2">
-          <div><label class="lbl">Mensalidade</label><input id="sv-valor" class="inp" type="text" inputmode="numeric" placeholder="R$ 0,00" oninput="maskMoeda(this)" style="font-family:monospace"></div>
-          <div><label class="lbl">Instalação</label><input id="sv-valor-inst" class="inp" type="text" inputmode="numeric" placeholder="R$ 0,00" oninput="maskMoeda(this)" style="font-family:monospace"></div>
+          <div><label class="lbl">Mensalidade<span class="field-role tecnico"><i class="fas fa-screwdriver-wrench" style="font-size:8px"></i>Técnico</span></label><input id="sv-valor" class="inp" type="text" inputmode="numeric" placeholder="R$ 0,00" oninput="maskMoeda(this)" style="font-family:monospace"></div>
+          <div><label class="lbl">Instalação<span class="field-role tecnico"><i class="fas fa-screwdriver-wrench" style="font-size:8px"></i>Técnico</span></label><input id="sv-valor-inst" class="inp" type="text" inputmode="numeric" placeholder="R$ 0,00" oninput="maskMoeda(this)" style="font-family:monospace"></div>
         </div>
         <div>
-          <label class="lbl">Forma de Pagamento</label>
+          <label class="lbl">Forma de Pagamento<span class="field-role cliente"><i class="fas fa-user" style="font-size:8px"></i>Cliente</span></label>
           <select id="sv-pagamento" class="inp">
             <option value="">Selecione...</option>
             <option>Boleto Bancário</option><option>PIX</option><option>Cartão de Crédito</option><option>Cartão de Débito</option><option>Débito em Conta</option><option>Dinheiro</option>
           </select>
         </div>
         <div class="grid-2">
-          <div><label class="lbl">Data de Instalação</label><input id="sv-data-inst" class="inp" type="date"></div>
-          <div><label class="lbl">Horário</label><input id="sv-hora" class="inp" type="time"></div>
+          <div><label class="lbl">Data de Instalação<span class="field-role tecnico"><i class="fas fa-screwdriver-wrench" style="font-size:8px"></i>Técnico</span></label><input id="sv-data-inst" class="inp" type="date"></div>
+          <div><label class="lbl">Horário<span class="field-role tecnico"><i class="fas fa-screwdriver-wrench" style="font-size:8px"></i>Técnico</span></label><input id="sv-hora" class="inp" type="time"></div>
         </div>
         <div class="grid-2">
-          <div><label class="lbl">Técnico</label><input id="sv-tecnico" class="inp" type="text" placeholder="Nome"></div>
-          <div><label class="lbl">KIT</label><input id="sv-kit" class="inp" type="text" placeholder="KIT-001"></div>
+          <div><label class="lbl">Técnico<span class="field-role tecnico"><i class="fas fa-screwdriver-wrench" style="font-size:8px"></i>Técnico</span></label><input id="sv-tecnico" class="inp" type="text" placeholder="Nome"></div>
+          <div><label class="lbl">KIT<span class="field-role tecnico"><i class="fas fa-screwdriver-wrench" style="font-size:8px"></i>Técnico</span></label><input id="sv-kit" class="inp" type="text" placeholder="KIT-001"></div>
         </div>
       </div>
     </div>
@@ -773,7 +801,7 @@ textarea.inp { resize: none; }
         </div>
         <div>
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-            <label class="lbl" style="margin:0">Assinatura do Cliente</label>
+            <label class="lbl" style="margin:0">Assinatura do Cliente<span class="field-role cliente"><i class="fas fa-user" style="font-size:8px"></i>Cliente</span></label>
             <button onclick="limparSig('sig-cliente')" style="font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;text-decoration:underline;font-family:'Inter',sans-serif">Limpar</button>
           </div>
           <canvas id="sig-cliente" class="sig-canvas"></canvas>
@@ -781,7 +809,7 @@ textarea.inp { resize: none; }
         </div>
         <div>
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-            <label class="lbl" style="margin:0">Assinatura do Vendedor</label>
+            <label class="lbl" style="margin:0">Assinatura do Vendedor<span class="field-role tecnico"><i class="fas fa-screwdriver-wrench" style="font-size:8px"></i>Técnico</span></label>
             <button onclick="limparSig('sig-vendedor')" style="font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;text-decoration:underline;font-family:'Inter',sans-serif">Limpar</button>
           </div>
           <canvas id="sig-vendedor" class="sig-canvas"></canvas>
